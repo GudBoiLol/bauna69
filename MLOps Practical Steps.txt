@@ -1,0 +1,3672 @@
+﻿MLOps Practical:Develop a machine learning project to predict house prices and use Git to initialize a repository, track source code changes, commit updates, and maintain version history 
+Step 1: Project Initialization
+* Create a folder named ML_house and open it in VS Code.
+* Open the VS Code Terminal (ensure it is set to Git Bash).
+* Initialize the empty Git repository:
+
+git init
+
+
+
+## Step 2: Create the Initial Model (Version 1)
+
+
+* Create a file named `predict.py` and paste the base code:
+
+
+```python
+# predict.py
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+
+# 1. Load the housing data
+print("Loading housing data...")
+data = fetch_california_housing()
+X = data.data
+y = data.target
+
+
+# 2. Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# 3. Train the model
+print("Training the Linear Regression model...")
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+
+print("Model trained successfully!")
+
+* Track the file and save the first snapshot:
+
+
+git add predict.py
+git commit -m "Initial commit: Added basic house price prediction model"
+Step 3: Update the Model with Mean Squared Error (Version 2)
+* Update predict.py to evaluate the model:
+
+
+# predict.py
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error # NEW IMPORT
+
+
+# 1. Load the housing data
+print("Loading housing data...")
+data = fetch_california_housing()
+X = data.data
+y = data.target
+
+
+# 2. Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# 3. Train the model
+print("Training the Linear Regression model...")
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+
+# 4. Evaluate the model (NEW CODE)
+print("Evaluating model...")
+predictions = model.predict(X_test)
+mse = mean_squared_error(y_test, predictions)
+print(f"Model trained successfully! Mean Squared Error: {mse:.2f}")
+
+* Track the update, commit the changes, and verify the history:
+
+
+git add predict.py
+git commit -m "Update: Added Mean Squared Error to evaluate model accuracy"
+git log --oneline
+Step 4: Configure the .gitignore File
+* Create a file named .gitignore and add these rules to block unwanted files:
+t
+pycache/
+*.csv
+*.joblib
+
+
+
+* Track and commit the configuration file:
+
+
+```bash
+git status
+git add .gitignore
+git commit -m "Configure .gitignore for ML cache and data files"
+Step 5: Create a Branch for R-Squared Experiment
+* Create and switch to a safe experimental branch:
+
+
+git checkout -b feature-r2-score
+
+* Update predict.py to include the final evaluation metric:
+
+
+# predict.py
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score # ADDED R2 SCORE
+
+
+# 1. Load the housing data
+print("Loading housing data...")
+data = fetch_california_housing()
+X = data.data
+y = data.target
+
+
+# 2. Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# 3. Train the model
+print("Training the Linear Regression model...")
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+
+# 4. Evaluate the model
+print("Evaluating model...")
+predictions = model.predict(X_test)
+mse = mean_squared_error(y_test, predictions)
+r2 = r2_score(y_test, predictions) # NEW CODE
+
+
+print(f"Model trained successfully!")
+print(f"Mean Squared Error: {mse:.2f}")
+print(f"R-squared Score: {r2:.2f}") # NEW CODE
+
+* Review the exact code differences, then commit the feature to the branch:
+
+
+git diff #git diff is used to see what changes you have  made in your files since the last commit
+ 
+git add predict.py
+git commit -m "Feature: Add R-squared evaluation metric"
+Step 6: Merge Branch and Run the Model
+* Switch back to the primary branch and pull in the tested feature:
+
+
+git checkout master
+git merge feature-r2-score
+
+* View the final graph timeline and run the script to see the outputs:
+
+
+git log --oneline --graph
+python predict.py
+Step 7: Zip for Submission
+* Save all files and close VS Code.
+* Locate ML_house in your File Explorer.
+* Right-click the folder and select Compress to ZIP file (or Send to > Compressed (zipped) folder).
+* Rename the .zip file as required by your examiner and submit.
+
+
+
+
+
+
+
+
+
+
+MLOps Practical: Create a classification project for predicting student pass or fail outcomes. Use Git branches to develop new features, merge changes, and resolve a merge conflict. 
+Step 1: Project Initialization and Base Model
+* Create a new folder named student_classification and open it in VS Code.
+* Open the VS Code Terminal (ensure it is Git Bash).
+* Initialize the empty Git repository:
+
+
+git init
+
+* Create a file named classify.py and paste the base code:
+
+
+# classify.py
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+
+
+# Features (X): Hours studied
+# Target (y): 0 = Fail, 1 = Pass
+X = np.array([[1], [2], [3], [4], [5], [6], [7], [8], [9], [10]])
+y = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+
+
+print("Training the Student Pass/Fail Classification Model...")
+model = LogisticRegression()
+model.fit(X, y)
+
+
+# A simple test prediction for a student who studied 5.5 hours
+test_student = np.array([[5.5]])
+prediction = model.predict(test_student)
+
+
+print(f"Prediction for 5.5 hours: {'Pass' if prediction[0] == 1 else 'Fail'}")
+
+* Track the file and save the first snapshot to the master branch:
+
+
+git add classify.py
+git commit -m "Initial commit: Added base Logistic Regression model"
+
+Step 2: Develop a Feature and Merge Changes (Clean Merge)
+* Create and switch to a new branch for the accuracy feature:
+
+
+git checkout -b feature-accuracy
+
+* Open classify.py, go to the bottom of the file, and add:
+
+
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(y, model.predict(X))
+print(f"Model Accuracy: {acc:.2f}")
+
+* Commit the feature to the branch:
+
+
+git add classify.py
+git commit -m "Feature: Added accuracy score evaluation"
+
+* Switch back to the master branch and merge the feature cleanly:
+
+
+git checkout master
+git merge feature-accuracy
+
+Step 3: Force the Merge Conflict
+* Create a new branch called test-conflict:
+
+
+git checkout -b test-conflict
+
+* At the very bottom of classify.py, add "Version A":
+
+
+print("Status: Feature branch evaluation complete.")
+
+* Commit "Version A" to the test-conflict branch:
+
+
+git add classify.py
+git commit -m "Add feature branch status"
+
+* Switch back to the master branch (the line you just added will disappear):
+
+
+git checkout master
+
+* Open classify.py, go to the exact same empty line at the bottom, and add "Version B":
+
+
+print("Status: Master branch ready for production.")
+
+* Commit "Version B" to the master branch:
+
+
+git add classify.py
+git commit -m "Add master branch status"
+
+* Attempt to merge the conflicting branch:
+
+
+git merge test-conflict
+
+(Git will throw a CONFLICT (content) error here).
+
+
+Step 4: Resolve the Merge Conflict
+* Open classify.py in VS Code.
+* Locate the conflict block highlighted by Git (<<<<<<< HEAD ... ======= ... >>>>>>> test-conflict).
+* Click the "Accept Both Changes" button provided by VS Code (or manually delete the marker lines and keep both prints).
+* Save the file (Ctrl + S).
+* In the terminal, mark the conflict as resolved by adding the file, then finalize the merge:
+
+
+git add classify.py
+git commit -m "Resolved merge conflict by keeping both status prints"
+
+Step 5: Verify and Zip
+* View the merged timeline graph and run the file:
+
+
+git log --oneline --graph
+python classify.py
+
+* Save all files, close VS Code, and zip the student_classification folder for submission.
+MLOps Practical: Build a machine learning project for classifying emails as spam or not spam. Implement Git version control and configure a .gitignore file to exclude datasets, model files, and environment folders. 
+Step 1: Project Setup and .gitignore
+* Create a new folder named email_spam_classifier and open it in VS Code.
+* Open the VS Code Terminal (ensure it is Git Bash).
+* Initialize the empty Git repository:
+git init
+* Create a new file named .gitignore and add these rules to block environments, datasets, and saved ML models:
+# Exclude environment folders
+venv/
+env/
+
+
+# Exclude massive datasets
+*.csv
+*.tsv
+
+
+# Exclude heavy saved model files
+*.pkl
+*.joblib
+* Commit the .gitignore configuration:
+git add .gitignore
+git commit -m "Initial commit: Configured .gitignore to block datasets and models"
+Step 2: Download the Dataset
+* Create a file named download_data.py and paste this script:
+import urllib.request
+
+
+print("Downloading Spam dataset from the internet...")
+url = "https://raw.githubusercontent.com/justmarkham/pycon-2016-tutorial/master/data/sms.tsv"
+urllib.request.urlretrieve(url, "spam_dataset.tsv")
+print("Download complete! Saved as 'spam_dataset.tsv'")
+* Run the script to fetch the dataset:
+python download_data.py
+* Verify that Git ignores the spam_dataset.tsv file by running git status, then commit the script:
+git add download_data.py
+git commit -m "Add script to automatically download the spam dataset"
+Step 3: Build and Save the Spam Classifier
+* Create a file named spam_classifier.py and paste the following code:
+import pandas as pd
+import joblib
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+
+
+print("Loading dataset...")
+df = pd.read_csv("spam_dataset.tsv", sep='\t', header=None, names=['label', 'text'])
+
+
+print("Training the Naive Bayes model...")
+model = make_pipeline(CountVectorizer(), MultinomialNB())
+model.fit(df['text'], df['label'])
+
+
+print("Saving the trained model...")
+joblib.dump(model, "spam_model.joblib")
+print("Success! Model saved as 'spam_model.joblib'")
+* Run the script:
+python spam_classifier.py
+* Verify that Git ignores spam_model.joblib, then commit the script:
+git add spam_classifier.py
+git commit -m "Add Naive Bayes classifier and model saving pipeline"
+Step 4: Test with a Feature Branch
+* Create and switch to a new branch for testing new emails:
+git checkout -b feature-new-tests
+* Update spam_classifier.py by adding this test block at the end:
+test_emails = [
+    "URGENT! You have won a 1 week FREE membership in our $100,000 Prize Jackpot!",
+    "Hey Abbas, just checking what time the exam starts tomorrow?",
+    "Congratulations! Click here to claim your free gift card now."
+]
+predictions = model.predict(test_emails)
+
+
+print("\n--- Live Test Predictions ---")
+for email, pred in zip(test_emails, predictions):
+    print(f"[{pred.upper()}] -> {email}")
+* Commit the feature update:
+git add spam_classifier.py
+git commit -m "Feature: Added additional tricky spam test case"
+* Switch back to the master branch and merge safely:
+git checkout master
+git merge feature-new-tests
+Step 5: Verify and Zip
+* View the final timeline and test the merged code:
+git log --oneline --graph
+python spam_classifier.py
+* Save all files, close VS Code, and compress the email_spam_classifier folder into a ZIP file for submission.
+
+
+MLOps Practical:  Develop a classification model to predict whether a student will pass or fail. Track the performance of Logistic Regression, Decision Tree, and Random Forest models using MLflow. 
+Step 1: Project Setup and MLflow Git Shields
+* Create a new folder named student_mlflow and open it in VS Code.
+* Open the VS Code Terminal (ensure it is Git Bash).
+* Initialize the empty Git repository:
+git init
+* Create a new file named .gitignore and add these rules to block environments, datasets, and MLflow tracking databases:
+# Exclude environment folders
+venv/
+env/
+
+
+# Exclude MLflow tracking database
+mlruns/
+
+
+# Exclude datasets and models
+*.csv
+*.pkl
+*.joblib
+* Create a file named student_data.csv and paste this dataset (Features: Hours Studied, Attendance; Target: Pass):
+Hours_Studied,Attendance,Pass
+2,50,0
+3,60,0
+4,55,0
+5,75,1
+6,80,1
+7,85,1
+8,90,1
+9,95,1
+2,40,0
+8,85,1
+* Commit this setup to Git:
+git add .gitignore
+git commit -m "Initial commit: Configured .gitignore to block MLflow runs and datasets"
+Step 2: Training and Tracking Models with MLflow
+* Install MLflow in your terminal:
+pip install mlflow
+* Create a new file named train_models.py and paste this script to train and log Logistic Regression, Decision Tree, and Random Forest models:
+# train_models.py
+import pandas as pd
+import mlflow
+import mlflow.sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+
+print("Loading student data...")
+df = pd.read_csv("student_data.csv")
+X = df[['Hours_Studied', 'Attendance']]
+y = df['Pass']
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+models = {
+    "Logistic Regression": LogisticRegression(),
+    "Decision Tree": DecisionTreeClassifier(random_state=42),
+    "Random Forest": RandomForestClassifier(random_state=42)
+}
+
+
+mlflow.set_experiment("Student_Pass_Fail_Prediction")
+
+
+for model_name, model in models.items():
+    print(f"\n--- Starting MLflow run for {model_name} ---")
+    with mlflow.start_run(run_name=model_name):
+        model.fit(X_train, y_train)
+        predictions = model.predict(X_test)
+        accuracy = accuracy_score(y_test, predictions)
+        
+        mlflow.log_param("model_type", model_name)
+        mlflow.log_metric("accuracy", accuracy)
+        
+        # Note: skops_trusted_types is required for tree models in MLflow
+        mlflow.sklearn.log_model(model, "saved_model", skops_trusted_types=["sklearn.tree._tree.Tree"])
+        
+        print(f"Successfully trained {model_name}!")
+        print(f"Accuracy Logged: {accuracy:.2f}")
+
+
+print("\nAll models trained and logged to MLflow successfully!")
+* Run the script:
+python train_models.py
+* Track the script in Git (the mlruns/ folder will be ignored):
+git add train_models.py
+git commit -m "Add script to train and log models via MLflow"
+Step 3: Launching the Dashboard and Finalizing
+* Start the MLflow UI server from the terminal:
+python -m mlflow ui
+* Open a web browser and go to http://127.0.0.1:5000 to view the MLflow dashboard.
+* Click on "Student_Pass_Fail_Prediction" to verify all three models logged their 1.00 accuracy metrics.
+* Return to the VS Code terminal and press Ctrl + C to shut down the web server.
+* Open .gitignore and append rules to block the newly generated SQLite database:
+# Exclude MLflow database
+mlflow.db
+*.db
+* Finalize the Git commit:
+git add .gitignore train_models.py
+git commit -m "Update train script for tree models and block mlflow.db"
+* Save all files, close VS Code, and compress the student_mlflow folder into a ZIP file for submission.
+MLOps Practical: Build a customer churn prediction model and conduct experiments with different feature sets and classification algorithms. Use MLflow to compare experiment results and identify the best-performing model. 
+Step 1: Project Initialization and the Churn Dataset
+* Create a new folder named customer_churn_mlflow and open it in VS Code.
+* Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+git init
+* Create a new file named .gitignore and add these rules:
+# Exclude environments
+venv/
+env/
+
+
+# Exclude MLflow databases
+mlruns/
+*.db
+
+
+# Exclude datasets and models
+*.csv
+*.pkl
+*.joblib
+* Create a file named churn_data.csv and paste this dataset:
+Tenure,MonthlyCharge,SupportCalls,Age,Churn
+12,50,1,25,0
+2,85,4,30,1
+24,60,0,45,0
+1,90,5,22,1
+60,105,2,55,0
+5,70,3,35,1
+36,45,1,40,0
+8,95,4,28,1
+48,55,0,50,0
+3,80,3,32,1
+* Commit this setup to Git:
+git add .gitignore
+git commit -m "Initial commit: Set up .gitignore and churn dataset"
+Step 2: Running the Grid Test Experiments
+* Create a file named churn_experiment.py and paste this script to test multiple feature sets and algorithms:
+# churn_experiment.py
+import pandas as pd
+import mlflow
+import mlflow.sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+
+print("Loading customer churn data...")
+df = pd.read_csv("churn_data.csv")
+y = df['Churn']
+
+
+feature_sets = {
+    "All_Features": ['Tenure', 'MonthlyCharge', 'SupportCalls', 'Age'],
+    "Support_Only": ['SupportCalls', 'MonthlyCharge']
+}
+
+
+models = {
+    "Logistic Regression": LogisticRegression(max_iter=1000),
+    "Random Forest": RandomForestClassifier(random_state=42)
+}
+
+
+mlflow.set_experiment("Customer_Churn_Experiments")
+
+
+for feat_name, features in feature_sets.items():
+    X = df[features]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    for model_name, model in models.items():
+        run_name = f"{model_name}_{feat_name}"
+        print(f"\n--- Running Experiment: {run_name} ---")
+        
+        with mlflow.start_run(run_name=run_name):
+            model.fit(X_train, y_train)
+            predictions = model.predict(X_test)
+            accuracy = accuracy_score(y_test, predictions)
+            
+            mlflow.log_param("model_type", model_name)
+            mlflow.log_param("feature_set", feat_name)
+            mlflow.log_metric("accuracy", accuracy)
+            mlflow.sklearn.log_model(model, "saved_model", skops_trusted_types=["sklearn.tree._tree.Tree"])
+            
+            print(f"Success! Accuracy Logged: {accuracy:.2f}")
+
+
+print("\nAll 4 experiments tracked successfully in MLflow!")
+* Run the experiment script:
+python churn_experiment.py
+* Commit the experimental script (the mlruns/ and *.db files will be ignored):
+git add churn_experiment.py
+git commit -m "Add churn prediction script to test multiple feature sets and algorithms via MLflow"
+Step 3: Analyzing the Results and Finalizing
+* Start the MLflow UI server to view the results:
+mlflow ui
+* Open http://127.0.0.1:5000 in a browser and go to "Customer_Churn_Experiments".
+* Compare the accuracy scores across all 4 runs.
+* Identify the Winner: Since all models achieved a 1.00 (100%) accuracy on this dataset, the tie-breaker goes to Logistic Regression with Support_Only features because it is the most efficient and simple model (using only 2 features instead of 4).
+* Shut down the web server (Ctrl + C in the terminal).
+* Compress the customer_churn_mlflow folder into a ZIP file for submission.
+MLOps Practical: Design a preprocessing pipeline for a house price dataset that handles missing values, encodes categorical variables, scales numerical features, and prepares data for model training. 
+Step 1: Project Setup and Creating the Messy Dataset
+* Create a new folder named house_price_pipeline and open it in VS Code.
+* Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+git init
+* Create a new file named .gitignore and add these rules to block environments, datasets, and saved models:
+# Exclude environments
+venv/
+env/
+__pycache__/
+
+
+# Exclude datasets and models
+*.csv
+*.pkl
+*.joblib
+* Create a file named messy_houses.csv and paste this exact comma-separated text (Notice the missing values denoted by consecutive commas and the categorical Neighborhood text):
+Size_sqft,Bedrooms,Age_years,Neighborhood,Price
+2500,3,10,Urban,500000
+1800,2,,Suburban,350000
+3200,,5,Rural,600000
+1500,2,20,,300000
+2800,4,8,Urban,550000
+,,15,Suburban,400000
+2100,3,12,Urban,450000
+3000,4,,Rural,580000
+1200,1,30,Suburban,250000
+2600,3,5,Urban,520000
+* Commit this messy dataset setup to your history:
+git add .gitignore
+git commit -m "Initial commit: Configured .gitignore and added messy house dataset"
+Step 2: Building the Preprocessing Pipeline and Viewing Transformed Data
+* Create a new file in VS Code named build_pipeline.py.
+* Paste this complete script, which includes the pipeline setup and a diagnostic section to view the cleaned data immediately:
+# build_pipeline.py
+import pandas as pd
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LinearRegression
+
+
+print("1. Loading the messy housing data...")
+df = pd.read_csv("messy_houses.csv")
+
+
+# Separate the features (X) from the target price (y)
+X = df.drop('Price', axis=1)
+y = df['Price']
+
+
+# Define which columns are numbers and which are words
+numeric_features = ['Size_sqft', 'Bedrooms', 'Age_years']
+categorical_features = ['Neighborhood']
+
+
+print("\n2. Designing the Preprocessing Pipelines...")
+# Assembly Line 1: For Numbers (Fill blanks with mean, then scale)
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+
+# Assembly Line 2: For Words (Fill blanks with 'Missing', then encode to 1s and 0s)
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='constant', fill_value='Missing')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+
+# Combine the two mini-pipelines into one master preprocessor
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ])
+
+
+print("\n3. Building the Final Master Pipeline (Preprocessor + Model)...")
+# Bundle the data cleaning AND the final prediction model together
+full_pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('model', LinearRegression())
+])
+
+
+print("\n4. Pushing messy data through the pipeline...")
+# The pipeline automatically cleans the data AND trains the model in one step!
+full_pipeline.fit(X, y)
+
+
+print("\nSuccess! The pipeline processed the missing values, scaled the numbers, encoded the text, and trained the model.")
+
+
+print("\n--- DIAGNOSTIC: VIEWING THE CLEANED DATA ---")
+# Ask the preprocessor part of the pipeline to show us its work on the first 3 rows
+cleaned_data_array = full_pipeline.named_steps['preprocessor'].transform(X.head(3))
+
+
+print("Raw Data (First 3 Rows):")
+print(X.head(3))
+print("\nCleaned & Transformed Data (First 3 Rows):")
+print(cleaned_data_array)
+print("--------------------------------------------\n")
+
+
+# Let's test it by making it predict the price of the first house in our dataset
+sample_prediction = full_pipeline.predict(X.iloc[[0]])
+print(f"Test Prediction for House 1: ${sample_prediction[0]:,.2f}")
+* Run the script in your terminal to see the original raw data, the newly cleaned/scaled/encoded data array, and the final price prediction:
+python build_pipeline.py
+* Track and save your automated pipeline script:
+git add build_pipeline.py
+git commit -m "Add automated preprocessing pipeline with imputers, scalers, and diagnostic output"
+Step 3: Finalizing and Zipping
+* Save all files and close VS Code.
+* Locate the house_price_pipeline folder on your Desktop.
+* Right-click it and select Compress to ZIP file for submission.
+
+
+MLOps Practical: Develop a preprocessing pipeline for a student performance dataset that removes duplicate records, handles missing values, encodes categorical attributes, and separates input features from target labels. 
+Step 1: Project Setup and the Messy Dataset
+* Create a new folder named student_preprocessing and open it in VS Code.
+* Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+* 
+Create a new file named .gitignore and add these standard rules:
+Plaintext
+# Exclude environments
+venv/
+env/
+__pycache__/
+
+
+# Exclude datasets
+*.csv
+   * 
+Create a file named messy_students.csv and paste this exact comma-separated text:
+Code snippet
+Hours_Studied,Attendance,Extracurricular,Grade
+10,90,Yes,Pass
+5,,No,Fail
+8,85,,Pass
+10,90,Yes,Pass
+,75,Yes,Pass
+3,60,No,Fail
+      * 
+Commit the setup:
+Bash
+git add .gitignore
+git commit -m "Initial commit: Configured .gitignore and added messy student dataset"
+Step 2: The Preprocessing Python Script
+         * Create a new file named student_pipeline.py and paste this complete script:
+Python
+# student_pipeline.py
+import pandas as pd
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+
+print("1. Loading raw student data...")
+df = pd.read_csv("messy_students.csv")
+
+
+print("\n--- RAW DATA ---")
+print(df)
+
+
+print("\n2. Removing duplicate records...")
+# Drop exact duplicate rows to prevent model bias
+df = df.drop_duplicates()
+print(f"Data shape after dropping duplicates: {df.shape}")
+
+
+print("\n3. Separating features (X) from target labels (y)...")
+# X gets everything EXCEPT the Grade. y gets ONLY the Grade.
+X = df.drop('Grade', axis=1)
+y = df['Grade']
+
+
+print("\n4. Designing the Preprocessing Pipelines...")
+numeric_features = ['Hours_Studied', 'Attendance']
+categorical_features = ['Extracurricular']
+
+
+# Pipeline for Numbers: Fill blanks with the average, then scale
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+
+# Pipeline for Words: Fill blanks with the most frequent word, then encode to 1s/0s
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='most_frequent')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+
+# Bundle both pipelines into the master preprocessor
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ])
+
+
+print("\n5. Pushing data through the pipeline...")
+# Fit and transform the input features (X)
+X_cleaned = preprocessor.fit_transform(X)
+
+
+print("\n--- DIAGNOSTIC: VIEWING THE CLEANED DATA ---")
+print("Cleaned & Transformed Input Features (X):")
+print(X_cleaned)
+print("\nSeparated Target Labels (y):")
+print(y.values)
+print("--------------------------------------------\n")
+print("Success! Data is deduplicated, imputed, scaled, encoded, and split!")
+Step 3: Execution and Finalizing
+         * Run the script in the terminal:
+Bash
+python student_pipeline.py
+         * 
+Save the final script to your Git history:
+Bash
+git add student_pipeline.py
+git commit -m "Add automated preprocessing pipeline with deduplication, feature separation, and encoding"
+            * 
+Save all files, close VS Code, and compress the student_preprocessing folder into a ZIP file for submission.
+
+
+MLOps Practical:  Design and implement an automated machine learning workflow for house price prediction using a pipeline tool such as Scikit-learn Pipeline. Integrate preprocessing, model training, and model evaluation into a single workflow. 
+Step 1: Project Setup and Dataset
+               * Create a new folder named house_price_workflow and open it in VS Code.
+               * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+               * 
+Create a new file named .gitignore and add the standard rules to block environments and datasets:
+Plaintext
+# Exclude environments and cache
+venv/
+env/
+__pycache__/
+
+
+# Exclude datasets and saved models
+*.csv
+*.pkl
+*.joblib
+                  * 
+Create a file named house_data.csv and paste this dataset (expanded to 15 rows to ensure a proper Train/Test split for evaluation, containing both missing blanks and categorical text):
+Code snippet
+Size_sqft,Bedrooms,Age_years,Neighborhood,Price
+2500,3,10,Urban,500000
+1800,2,,Suburban,350000
+3200,,5,Rural,600000
+1500,2,20,,300000
+2800,4,8,Urban,550000
+,,15,Suburban,400000
+2100,3,12,Urban,450000
+3000,4,,Rural,580000
+1200,1,30,Suburban,250000
+2600,3,5,Urban,520000
+2300,3,18,Suburban,480000
+3500,5,2,Rural,700000
+1900,2,25,Urban,380000
+2700,4,7,,530000
+1600,2,22,Suburban,320000
+                     * 
+Commit the initial setup:
+Bash
+git add .gitignore
+git commit -m "Initial commit: Set up .gitignore and house data for unified workflow"
+Step 2: The Unified Workflow Script
+                        * Create a new file named house_workflow.py and paste this complete script. This code integrates data cleaning, learning, and testing into one single, automated Scikit-Learn Pipeline, complete with a diagnostic view of the cleaned data:
+Python
+# house_workflow.py
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+
+print("1. Loading housing dataset...")
+df = pd.read_csv("house_data.csv")
+
+
+print("2. Separating features and splitting data...")
+X = df.drop('Price', axis=1)
+y = df['Price']
+# Split data into 80% training and 20% testing
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+print("3. Designing the automated preprocessing assembly lines...")
+# Pipeline for numbers: Impute missing values with the mean, then scale
+numeric_features = ['Size_sqft', 'Bedrooms', 'Age_years']
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+
+# Pipeline for categorical text: Impute missing values with 'Missing', then One-Hot Encode
+categorical_features = ['Neighborhood']
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='constant', fill_value='Missing')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+
+# Combine both preprocessors
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ])
+
+
+print("4. Integrating Preprocessing and Model Training into a Single Workflow...")
+# This single pipeline handles cleaning, scaling, encoding, AND training!
+automated_workflow = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('model', LinearRegression())
+])
+
+
+print("5. Training the model via the automated workflow...")
+# We only pass the raw training data; the pipeline cleans it automatically before training
+automated_workflow.fit(X_train, y_train)
+
+
+# --- DIAGNOSTIC ADDITION ---
+print("\n--- DIAGNOSTIC: VIEWING THE CLEANED TRAINING DATA ---")
+# Ask the preprocessor part of the unified pipeline to show its work
+cleaned_data_array = automated_workflow.named_steps['preprocessor'].transform(X_train.head(3))
+print("Raw Training Data (First 3 Rows):")
+print(X_train.head(3))
+print("\nCleaned & Transformed Training Data:")
+print(cleaned_data_array)
+print("-----------------------------------------------------\n")
+
+
+print("6. Evaluating the unified workflow...")
+# We pass the raw test data; the pipeline applies the exact same cleaning steps automatically
+predictions = automated_workflow.predict(X_test)
+mse = mean_squared_error(y_test, predictions)
+r2 = r2_score(y_test, predictions)
+
+
+print("\n--- WORKFLOW EVALUATION RESULTS ---")
+print(f"Mean Squared Error: {mse:,.2f}")
+print(f"R-squared Score: {r2:.2f}")
+print("-----------------------------------")
+print("Automated Machine Learning Workflow executed successfully!")
+Step 3: Execution and Finalizing
+                        * Run the unified workflow script in your terminal to see the diagnostics and evaluation results:
+Bash
+python house_workflow.py
+                        * 
+Track and save the script in your Git history:
+Bash
+git add house_workflow.py
+git commit -m "Add unified Scikit-Learn Pipeline integrating preprocessing, training, diagnostics, and evaluation"
+                           * 
+Save all files, close VS Code, and compress the house_price_workflow folder into a ZIP file for submission.
+
+
+MLOps Practical: Develop a demonstration workflow for student pass/fail prediction that automates data loading, preprocessing, model training, evaluation, and saving the trained model. 
+Step 1: Project Setup and the Demo Dataset
+                              * Create a new folder named student_demo_workflow and open it in VS Code.
+                              * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                              * 
+Create a new file named .gitignore and add these rules to block environments, datasets, and saved models:
+Plaintext
+# Exclude environments and cache
+venv/
+env/
+__pycache__/
+
+
+# Exclude datasets and saved models
+*.csv
+*.joblib
+*.pkl
+                                 * 
+Create a file named student_demo.csv and paste this exact dataset (with the fixed missing value line):
+Code snippet
+Study_Hours,Previous_Score,Extracurriculars,Pass
+10,85,Yes,1
+5,40,No,0
+8,,Yes,1
+3,45,No,0
+12,90,,1
+,60,Yes,1
+2,30,No,0
+7,75,Yes,1
+9,80,No,1
+4,50,,0
+                                    * 
+Commit this setup to Git:
+Bash
+git add .gitignore
+git commit -m "Initial commit: Set up .gitignore and student demo dataset"
+Step 2: The End-to-End Demo Script
+                                       * Create a new file in VS Code named demo_workflow.py.
+                                       * Paste this complete script, which automates data loading, preprocessing, training, evaluation, and serialization, while displaying the required diagnostic proofs:
+Python
+# demo_workflow.py
+import pandas as pd
+import joblib
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+
+print("1. AUTOMATED DATA LOADING...")
+df = pd.read_csv("student_demo.csv")
+
+
+print("2. SEPARATING & SPLITTING DATA...")
+X = df.drop('Pass', axis=1)
+y = df['Pass']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# ---------------- PREPROCESSING ----------------
+numeric_features = ['Study_Hours', 'Previous_Score']
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+
+categorical_features = ['Extracurriculars']
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='constant', fill_value='Missing')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ])
+
+
+# ---------------- UNIFIED WORKFLOW ----------------
+automated_workflow = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('model', LogisticRegression())
+])
+
+
+print("3. AUTOMATED PREPROCESSING AND MODEL TRAINING...")
+automated_workflow.fit(X_train, y_train)
+
+
+# --- VISUAL PROOF OF PREPROCESSING ---
+print("\n--- DIAGNOSTIC: PROOF OF PREPROCESSING ---")
+cleaned_data_array = automated_workflow.named_steps['preprocessor'].transform(X_train.head(3))
+print("Raw Unseen Data (First 3 Rows):")
+print(X_train.head(3))
+print("\nCleaned, Scaled & Encoded Data:")
+print(cleaned_data_array)
+print("------------------------------------------\n")
+
+
+print("4. AUTOMATED MODEL EVALUATION...")
+predictions = automated_workflow.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
+print(f"Model Accuracy on Test Data: {accuracy:.2f}")
+
+
+print("\n5. SAVING (SERIALIZING) THE TRAINED PIPELINE...")
+joblib.dump(automated_workflow, "student_model.joblib")
+print("Success! Complete workflow saved as 'student_model.joblib'")
+Step 3: Execution and Finalizing
+                                       * Run the workflow script in your terminal to see the diagnostics, evaluation, and serialization:
+Bash
+python demo_workflow.py
+                                       * 
+Track and save the script in your Git history:
+Bash
+git add demo_workflow.py
+git commit -m "Add end-to-end classification workflow with diagnostics and joblib serialization"
+                                          * 
+Save all files, close VS Code, and compress the student_demo_workflow folder into a ZIP file for submission.
+
+
+MLOps Practical: Develop a REST API using Flask or FastAPI to serve a house price prediction model. Create a prediction endpoint that accepts house features in JSON format and returns the predicted price. 
+Step 1: Project Setup and Model Generation
+                                             * Create a new folder named house_price_api and open it in VS Code.
+                                             * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                                             * 
+Create a new file named .gitignore and add these rules to block the saved model from Git:
+Plaintext
+venv/
+env/
+__pycache__/
+*.joblib
+                                                * 
+Create a file named train_model.py and paste this script to quickly generate a trained model:
+Python
+# train_model.py
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+import joblib
+
+
+print("1. Generating dummy house data...")
+data = {
+    'Size_sqft': [1500, 2000, 2500, 3000, 3500], 
+    'Bedrooms': [2, 3, 3, 4, 4], 
+    'Price': [300000, 400000, 500000, 600000, 700000]
+}
+df = pd.DataFrame(data)
+
+
+print("2. Training the model...")
+X = df[['Size_sqft', 'Bedrooms']]
+y = df['Price']
+model = LinearRegression()
+model.fit(X, y)
+
+
+print("3. Saving the model for the API...")
+joblib.dump(model, 'house_model.joblib')
+print("Success! Model saved as 'house_model.joblib'")
+                                                   * 
+Run the training script to generate house_model.joblib, then track the files in Git:
+Bash
+python train_model.py
+git add .gitignore train_model.py
+git commit -m "Initial commit: Add setup and script to generate base model"
+Step 2: Building the API Server and Test Client
+                                                      * Install the necessary API libraries in your terminal:
+Bash
+pip install fastapi uvicorn requests pydantic
+                                                      * 
+Create a new file named main.py and paste the API server code. This defines the /predict endpoint, ensuring it accepts JSON and returns the predicted price:
+Python
+# main.py
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
+import pandas as pd
+
+
+# 1. Initialize the FastAPI app
+app = FastAPI(title="House Price Prediction API")
+
+
+# 2. Load the trained model into the server's memory
+print("Loading saved model...")
+model = joblib.load('house_model.joblib')
+
+
+# 3. Define the exact JSON structure the API expects to receive
+class HouseFeatures(BaseModel):
+    Size_sqft: float
+    Bedrooms: int
+
+
+# 4. Create the prediction endpoint (POST method)
+@app.post("/predict")
+def predict_price(features: HouseFeatures):
+    # Convert the incoming JSON data into a format the model understands
+    input_data = pd.DataFrame([features.model_dump()])
+    
+    # Make the prediction
+    prediction = model.predict(input_data)
+    
+    # Return both the accepted JSON and the predicted price as a JSON response
+    return {
+        "accepted_json_features": features.model_dump(),
+        "predicted_price": round(prediction[0], 2)
+    }
+                                                         * 
+Create a file named test_api.py and paste this client script. (We use this script instead of a web browser because browsers only send GET requests, while our API requires a POST request with a JSON payload to return a prediction):
+Python
+# test_api.py
+import requests
+import json
+
+
+# The URL of our local API server
+url = "http://127.0.0.1:8000/predict"
+
+
+# The house features formatted as JSON
+house_data = {
+    "Size_sqft": 2200,
+    "Bedrooms": 3
+}
+
+
+print(f"--- SENDING REQUEST ---")
+print(f"Sending JSON to API: {json.dumps(house_data)}")
+
+
+# Send the POST request to the API
+response = requests.post(url, json=house_data)
+
+
+print(f"\n--- API RESPONSE ---")
+# Print the exact JSON response returned by the server
+print(json.dumps(response.json(), indent=4))
+print("--------------------\n")
+print("API successfully accepted JSON features and returned the predicted price!")
+Step 3: Execution and Finalizing
+                                                            * Start the FastAPI server in your first terminal. This keeps the model loaded in memory and listening for incoming data:
+Bash
+uvicorn main:app
+python -m uvicorn main:app --reload
+                                                            * 
+Open a second terminal window in VS Code (leaving the server running in the first), and run the test script to send the JSON payload to the server:
+Bash
+python test_api.py
+                                                               * 
+Review the output in your second terminal to confirm the API received the JSON and returned the predicted price.
+                                                               * Stop the server in the first terminal (click into it and press Ctrl + C).
+                                                               * Save everything to your Git history:
+Bash
+git add main.py test_api.py
+git commit -m "Add FastAPI server and JSON client test script"
+                                                                  * 
+Save all files, close VS Code, and compress the house_price_api folder into a ZIP file for submission.
+
+
+Build a REST API for a student pass/fail classification model. Implement an endpoint that accepts student performance data and returns the predicted class and, where supported, the prediction probability. 
+Problem Statement
+Build a REST API for a student pass/fail classification model. Implement an endpoint that accepts student performance data and returns the predicted class and, where supported, the prediction probability.
+Objective
+To build a student pass/fail classification model using Logistic Regression and deploy it using FastAPI. The API accepts student performance data in JSON format and returns the predicted class (PASS/FAIL) along with its prediction probability.
+________________
+
+
+Step 1: Project Setup and Model Generation
+1. Create the Project Folder
+                                                                     1. Open VS Code.
+                                                                     2. Create a folder named student_pass_api.
+                                                                     3. Open the folder in VS Code.
+                                                                     4. Open Terminal → New Terminal.
+                                                                     5. Select Git Bash as the terminal.
+Initialize Git:
+git init
+2. Create .gitignore
+Create a file named .gitignore and paste:
+venv/
+env/
+__pycache__/
+*.joblib
+3. Create a Virtual Environment
+Run:
+python -m venv venv
+source venv/Scripts/activate 
+.\venv\Scripts\Activate.ps1 (for Windows)
+Install the required libraries:
+python -m pip install pandas scikit-learn joblib fastapi uvicorn requests
+4. Create train_model.py
+Create a file named train_model.py and paste:
+# train_model.py
+
+
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+import joblib
+
+
+print("1. Generating student performance data...")
+
+
+data = {
+    "Study_Hours": [1, 2, 3, 4, 5, 6, 7, 8, 2, 4, 6, 9],
+    "Attendance": [40, 50, 55, 60, 70, 80, 85, 95, 35, 65, 75, 98],
+    "Previous_Score": [20, 30, 35, 45, 55, 65, 75, 85, 25, 50, 70, 90],
+    "Result": [0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1]
+}
+
+
+df = pd.DataFrame(data)
+
+
+print("2. Training classification model...")
+
+
+X = df[["Study_Hours", "Attendance", "Previous_Score"]]
+y = df["Result"]
+
+
+model = LogisticRegression(max_iter=1000)
+model.fit(X, y)
+
+
+print("3. Saving trained model...")
+
+
+joblib.dump(model, "student_model.joblib")
+
+
+print("Success! Model saved as student_model.joblib")
+5. Train the Model
+Run:
+python train_model.py
+Expected output:
+1. Generating student performance data...
+2. Training classification model...
+3. Saving trained model...
+Success! Model saved as student_model.joblib
+The file student_model.joblib will be generated.
+6. First Git Commit
+git add .gitignore train_model.py
+git commit -m "Initial commit: Add student classification model"
+
+________________
+Step 2: Building the FastAPI REST API
+1. Create main.py
+Create a file named main.py and paste:
+# main.py
+
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+import pandas as pd
+import joblib
+
+
+app = FastAPI(title="Student Pass/Fail Prediction API")
+
+
+# Load trained model
+model = joblib.load("student_model.joblib")
+
+
+# Define input structure
+class StudentFeatures(BaseModel):
+    Study_Hours: float
+    Attendance: float
+    Previous_Score: float
+
+
+# Prediction endpoint
+@app.post("/predict")
+def predict_result(student: StudentFeatures):
+
+
+    # Convert JSON into DataFrame
+    input_data = pd.DataFrame([student.model_dump()])
+
+
+    # Predict class
+    prediction = int(model.predict(input_data)[0])
+
+
+    # Calculate probabilities
+    probabilities = model.predict_proba(input_data)[0]
+
+
+    fail_probability = float(probabilities[0])
+    pass_probability = float(probabilities[1])
+
+
+    predicted_class = "PASS" if prediction == 1 else "FAIL"
+
+
+    prediction_probability = (
+        pass_probability if prediction == 1 else fail_probability
+    )
+
+
+    # Return JSON response
+    return {
+        "accepted_student_data": student.model_dump(),
+        "predicted_class": predicted_class,
+        "prediction_probability_percent": round(
+            prediction_probability * 100, 2
+        ),
+        "class_probabilities": {
+            "PASS": round(pass_probability * 100, 2),
+            "FAIL": round(fail_probability * 100, 2)
+        }
+    }
+
+________________
+Step 3: Creating the API Test Client
+1. Create test_api.py
+Create a file named test_api.py and paste:
+# test_api.py
+
+
+import requests
+import json
+
+
+url = "http://127.0.0.1:8000/predict"
+
+
+# Student performance data
+student_data = {
+    "Study_Hours": 6,
+    "Attendance": 80,
+    "Previous_Score": 70
+}
+
+
+print("\n--- SENDING STUDENT DATA ---")
+print(json.dumps(student_data, indent=4))
+
+
+# Send POST request
+response = requests.post(url, json=student_data)
+response.raise_for_status()
+
+
+print("\n--- API PREDICTION RESPONSE ---")
+print(json.dumps(response.json(), indent=4))
+
+
+print("\nAPI successfully returned:")
+print("1. Accepted student performance data")
+print("2. Predicted class (PASS/FAIL)")
+print("3. Prediction probability")
+print("4. Probability for both classes")
+
+________________
+Step 4: Execute and Test the REST API
+1. Start the FastAPI Server
+Open the first VS Code terminal and run:
+python -m uvicorn main:app --reload
+Expected output:
+INFO: Uvicorn running on http://127.0.0.1:8000
+INFO: Application startup complete.
+Keep the server running.
+2. Open a Second Terminal
+Open Terminal → New Terminal.
+Activate the virtual environment if necessary:
+source venv/Scripts/activate
+.\venv\Scripts\Activate.ps1 (for Windows)
+Run the test script:
+python test_api.py
+3. Expected Output
+Input JSON:
+{
+    "Study_Hours": 6,
+    "Attendance": 80,
+    "Previous_Score": 70
+}
+Example API response (probabilities are illustrative):
+{
+    "accepted_student_data": {
+        "Study_Hours": 6.0,
+        "Attendance": 80.0,
+        "Previous_Score": 70.0
+    },
+    "predicted_class": "PASS",
+    "prediction_probability_percent": 95.0,
+    "class_probabilities": {
+        "PASS": 95.0,
+        "FAIL": 5.0
+    }
+}
+Terminal confirmation:
+API successfully returned:
+1. Accepted student performance data
+2. Predicted class (PASS/FAIL)
+3. Prediction probability
+4. Probability for both classes
+4. Test Through FastAPI Documentation (Optional)
+                                                                     1. Open a web browser.
+                                                                     2. Visit http://127.0.0.1:8000/docs.
+                                                                     3. Expand the POST /predict endpoint.
+                                                                     4. Click Try it out.
+                                                                     5. Enter:
+{
+    "Study_Hours": 6,
+    "Attendance": 80,
+    "Previous_Score": 70
+}
+                                                                     6. 
+Click Execute.
+                                                                     7. Verify the JSON response contains the predicted class and probabilities.
+________________
+
+
+Step 5: Final Git Commit and Submission
+1. Stop the Server
+Switch to the first terminal and press Ctrl + C.
+2. Create requirements.txt
+Create a file named requirements.txt and paste:
+pandas
+scikit-learn
+joblib
+fastapi
+uvicorn
+requests
+3. Commit the Files
+Run:
+git add main.py test_api.py requirements.txt
+
+
+git commit -m "Add FastAPI student prediction endpoint and test client"
+4. Final Project Structure
+student_pass_api/
+│
+├── .gitignore
+├── train_model.py
+├── main.py
+├── test_api.py
+├── requirements.txt
+├── student_model.joblib
+└── venv/
+5. Create ZIP for Submission
+                                                                        1. Save all files.
+                                                                        2. Open File Explorer.
+                                                                        3. Create a submission copy of the project folder.
+                                                                        4. Exclude the venv folder from the submission copy.
+                                                                        5. Keep student_model.joblib so the API can run without retraining.
+                                                                        6. Right-click the submission folder.
+                                                                        7. Select Compress to ZIP file.
+                                                                        8. Name the ZIP student_pass_api.zip.
+                                                                        9. Submit the ZIP file.
+________________
+
+
+Final Result
+The student pass/fail classification REST API was successfully implemented using FastAPI and Logistic Regression.
+The API accepts student performance data through the /predict endpoint and returns:
+                                                                        * Accepted student performance data.
+                                                                        * Predicted class (PASS/FAIL).
+                                                                        * Prediction probability in percentage.
+                                                                        * Individual PASS and FAIL probabilities.
+The REST API was tested using a Python client and can also be tested through FastAPI's interactive documentation.
+Conclusion: A student pass/fail classification model was trained, saved, deployed through a FastAPI REST API, and tested using JSON requests and responses.
+
+
+MLOps Practical: Containerize House Price Prediction Application Using Docker
+
+
+Problem: Containerize a house price prediction application using Docker. Create a Dockerfile, install the required Python dependencies, and run the prediction application inside a container.
+
+
+Step 1: Project Setup and Dependencies
+                                                                        * Create a new folder named house_price_docker and open it in VS Code.
+                                                                        * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                                                                        * 
+Create a new file named .gitignore and add these rules to block the saved model and cache from Git:
+Plaintext
+venv/
+env/
+__pycache__/
+*.joblib
+                                                                           * 
+Create a new file named requirements.txt and define the Python libraries Docker needs to install:
+Plaintext
+pandas
+scikit-learn
+joblib
+Step 2: Model Generation and Initial Commit
+                                                                              * Create a file named train_model.py and paste this script to train and save the machine learning model:
+Python
+# train_model.py
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+import joblib
+
+
+print("1. Generating house price dataset...")
+data = {
+    "Size_sqft": [1000, 1500, 2000, 2500, 3000, 3500],
+    "Bedrooms": [1, 2, 3, 3, 4, 4],
+    "Price": [200000, 300000, 400000, 500000, 600000, 700000]
+}
+df = pd.DataFrame(data)
+
+
+print("2. Training house price prediction model...")
+X = df[["Size_sqft", "Bedrooms"]]
+y = df["Price"]
+model = LinearRegression()
+model.fit(X, y)
+
+
+print("3. Saving trained model...")
+joblib.dump(model, "house_model.joblib")
+print("Success! Model saved as house_model.joblib")
+                                                                              * 
+Run the training script to generate house_model.joblib:
+Bash
+python train_model.py
+                                                                                 * 
+Track the foundation files and save your initial Git commit:
+Bash
+git add .gitignore requirements.txt train_model.py
+git commit -m "Initial commit: Add setup, requirements, and model generator"
+Step 3: The Prediction Application
+                                                                                    * Create a file named predict.py and paste the application code that loads the model and outputs the prediction:
+Python
+# predict.py
+import pandas as pd
+import joblib
+import json
+
+
+print("\n--- HOUSE PRICE PREDICTION APPLICATION ---")
+
+
+# Load trained model
+model = joblib.load("house_model.joblib")
+
+
+# Input house data
+house_data = {
+    "Size_sqft": 2200,
+    "Bedrooms": 3
+}
+
+
+print("\nInput House Data:")
+print(json.dumps(house_data, indent=4))
+
+
+# Convert data into DataFrame
+input_data = pd.DataFrame([house_data])
+
+
+# Predict house price
+prediction = model.predict(input_data)
+
+
+# Prepare prediction result
+result = {
+    "input_features": house_data,
+    "predicted_house_price": round(float(prediction[0]), 2)
+}
+
+
+# Display result
+print("\n--- PREDICTION RESULT ---")
+print(json.dumps(result, indent=4))
+
+
+print("\nHouse price prediction completed successfully!")
+Step 4: Docker Configuration
+                                                                                    * Create a new file named Dockerfile (exactly as written, with no extension) and paste the blueprint for the container:
+Dockerfile
+# Use Python base image
+FROM python:3.11-slim
+
+
+# Set working directory
+WORKDIR /app
+
+
+# Copy dependency file
+COPY requirements.txt .
+
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+# Copy application files
+COPY train_model.py .
+COPY predict.py .
+
+
+# Train the model inside Docker during the build process
+RUN python train_model.py
+
+
+# Run the prediction application when the container starts
+CMD ["python", "predict.py"]
+                                                                                    * 
+Create a file named .dockerignore and paste these rules to prevent heavy, unnecessary folders from being copied into the container:
+Plaintext
+venv/
+env/
+__pycache__/
+.git/
+*.joblib
+Step 5: Building, Running, and Finalizing
+                                                                                       * Make sure Docker Desktop is running on your computer.
+                                                                                       * In your VS Code terminal, build the Docker image (don't forget the period . at the end):
+Bash
+docker build -t house-price-predictor .
+                                                                                       * 
+Once the build is complete, run the container to see the predicted price output in your terminal:
+Bash
+docker run --rm house-price-predictor
+                                                                                          * 
+Save your final application and Docker files to your Git history:
+Bash
+git add .dockerignore Dockerfile predict.py
+git commit -m "Containerize house price prediction application using Docker"
+                                                                                             * 
+Save all files, close VS Code, and compress the house_price_docker folder into a ZIP file for submission.
+
+
+MLOps Practical: Dockerized Student Performance Prediction REST API
+Problem: Develop a Dockerized student performance prediction service using Flask or FastAPI. Configure the container to load the trained model and expose an API port for prediction requests.
+
+
+Step 1: Project Setup and Initial Git Commit
+                                                                                                * Create a new folder named student_docker_api and open it in VS Code.
+                                                                                                * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                                                                                                * 
+Create a new file named .gitignore to block the saved model and environments from Git:
+Plaintext
+venv/
+env/
+__pycache__/
+*.joblib
+                                                                                                   * 
+Create a new file named .dockerignore to prevent heavy folders from copying into the container:
+Plaintext
+venv/
+env/
+__pycache__/
+.git/
+*.joblib
+                                                                                                      * 
+Create a new file named requirements.txt and define the required libraries:
+Plaintext
+pandas
+scikit-learn
+joblib
+fastapi
+uvicorn
+requests
+pydantic
+                                                                                                         * 
+Track the foundation files and save your initial Git commit:
+Bash
+git add .gitignore .dockerignore requirements.txt
+git commit -m "Initial commit: Add setup shields and requirements for Docker API"
+Step 2: The Machine Learning Model and FastAPI Server
+                                                                                                            * Create a file named train_model.py and paste this script to generate the model. (Docker will run this script automatically during the build process):
+Python
+# train_model.py
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+import joblib
+
+
+print("1. Generating student performance data...")
+data = {
+    "Study_Hours": [2, 3, 4, 5, 6, 7, 8, 9],
+    "Attendance": [40, 50, 60, 75, 80, 85, 90, 95],
+    "Pass": [0, 0, 0, 1, 1, 1, 1, 1]
+}
+df = pd.DataFrame(data)
+
+
+print("2. Training the classification model...")
+X = df[["Study_Hours", "Attendance"]]
+y = df["Pass"]
+model = LogisticRegression()
+model.fit(X, y)
+
+
+print("3. Saving the trained model...")
+joblib.dump(model, "student_model.joblib")
+print("Success! Model saved as 'student_model.joblib'")
+                                                                                                            * 
+Create a file named main.py and paste the API server code. This loads the model and sets up the /predict endpoint:
+Python
+# main.py
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
+import pandas as pd
+
+
+app = FastAPI(title="Dockerized Student Performance API")
+
+
+# Load the model generated by train_model.py
+model = joblib.load('student_model.joblib')
+
+
+class StudentData(BaseModel):
+    Study_Hours: float
+    Attendance: float
+
+
+@app.post("/predict")
+def predict_performance(student: StudentData):
+    input_data = pd.DataFrame([student.model_dump()])
+    prediction = model.predict(input_data)
+    
+    result = "PASS" if prediction[0] == 1 else "FAIL"
+    
+    return {
+        "received_data": student.model_dump(),
+        "predicted_outcome": result
+    }
+                                                                                                               * 
+Create a file named test_api.py. This script will act as our client to test the API from the outside once the container is running:
+Python
+# test_api.py
+import requests
+import json
+
+
+# This targets the exposed port on our local machine, which routes into the Docker container!
+url = "http://127.0.0.1:8000/predict"
+
+
+student_payload = {
+    "Study_Hours": 7.5,
+    "Attendance": 88.0
+}
+
+
+print(f"--- SENDING REQUEST TO DOCKER CONTAINER ---")
+print(f"Payload: {json.dumps(student_payload)}")
+
+
+response = requests.post(url, json=student_payload)
+
+
+print(f"\n--- CONTAINER RESPONSE ---")
+print(json.dumps(response.json(), indent=4))
+print("--------------------------")
+Step 3: The Docker Configuration
+                                                                                                                  * Create a new file named Dockerfile (exactly as written, with no extension) and paste the blueprint. Notice the critical 0.0.0.0 host binding and the EXPOSE command:
+Dockerfile
+# Use Python base image
+FROM python:3.11-slim
+
+
+# Set working directory
+WORKDIR /app
+
+
+# Copy dependency file and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+# Copy application files
+COPY train_model.py .
+COPY main.py .
+
+
+# Train the model inside Docker during the build
+RUN python train_model.py
+
+
+# Expose port 8000 for the API
+EXPOSE 8000
+
+
+# Start the FastAPI server on 0.0.0.0 to accept outside connections
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+Step 4: Building, Running, and Finalizing
+                                                                                                                  * Make sure Docker Desktop is running on your computer.
+                                                                                                                  * In your first VS Code terminal, build the container image:
+Bash
+docker build -t student-api-docker .
+                                                                                                                  * 
+Once built, run the container. The -p 8000:8000 flag maps your computer's port to the container's exposed port:
+Bash
+docker run -p 8000:8000 --rm student-api-docker
+                                                                                                                     * 
+Open a second terminal window in VS Code (leaving the container running in the first terminal), and run your test script:
+Bash
+python test_api.py
+                                                                                                                        * 
+Review the output in your second terminal to confirm your local script successfully communicated with the Dockerized API and received a "PASS" prediction.
+                                                                                                                        * Stop the container in your first terminal (click into it and press Ctrl + C).
+                                                                                                                        * Save all remaining files to your Git history:
+Bash
+git add train_model.py main.py test_api.py Dockerfile
+git commit -m "Add machine learning model, FastAPI server, and Dockerfile to containerize the API"
+                                                                                                                           * 
+Save all files, close VS Code, and compress the student_docker_api folder into a ZIP file for submission.
+
+
+MLOps Practical: Create a classification project for predicting student pass or fail outcomes. Use Git branches to develop new features, merge changes, and resolve a merge conflict. 
+Step 1: Project Initialization and Base Model
+                                                                                                                              * Create a new folder named student_classification and open it in VS Code.
+                                                                                                                              * Open the VS Code Terminal (ensure it is Git Bash).
+                                                                                                                              * Initialize the empty Git repository:
+
+
+git init
+
+                                                                                                                              * Create a file named classify.py and paste the base code:
+
+
+# classify.py
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+
+
+# Features (X): Hours studied
+# Target (y): 0 = Fail, 1 = Pass
+X = np.array([[1], [2], [3], [4], [5], [6], [7], [8], [9], [10]])
+y = np.array([0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+
+
+print("Training the Student Pass/Fail Classification Model...")
+model = LogisticRegression()
+model.fit(X, y)
+
+
+# A simple test prediction for a student who studied 5.5 hours
+test_student = np.array([[5.5]])
+prediction = model.predict(test_student)
+
+
+print(f"Prediction for 5.5 hours: {'Pass' if prediction[0] == 1 else 'Fail'}")
+
+                                                                                                                              * Track the file and save the first snapshot to the master branch:
+
+
+git add classify.py
+git commit -m "Initial commit: Added base Logistic Regression model"
+
+Step 2: Develop a Feature and Merge Changes (Clean Merge)
+                                                                                                                              * Create and switch to a new branch for the accuracy feature:
+
+
+git checkout -b feature-accuracy
+
+                                                                                                                              * Open classify.py, go to the bottom of the file, and add:
+
+
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(y, model.predict(X))
+print(f"Model Accuracy: {acc:.2f}")
+
+                                                                                                                              * Commit the feature to the branch:
+
+
+git add classify.py
+git commit -m "Feature: Added accuracy score evaluation"
+
+                                                                                                                              * Switch back to the master branch and merge the feature cleanly:
+
+
+git checkout master
+git merge feature-accuracy
+
+Step 3: Force the Merge Conflict
+                                                                                                                              * Create a new branch called test-conflict:
+
+
+git checkout -b test-conflict
+
+                                                                                                                              * At the very bottom of classify.py, add "Version A":
+
+
+print("Status: Feature branch evaluation complete.")
+
+                                                                                                                              * Commit "Version A" to the test-conflict branch:
+
+
+git add classify.py
+git commit -m "Add feature branch status"
+
+                                                                                                                              * Switch back to the master branch (the line you just added will disappear):
+
+
+git checkout master
+
+                                                                                                                              * Open classify.py, go to the exact same empty line at the bottom, and add "Version B":
+
+
+print("Status: Master branch ready for production.")
+
+                                                                                                                              * Commit "Version B" to the master branch:
+
+
+git add classify.py
+git commit -m "Add master branch status"
+
+                                                                                                                              * Attempt to merge the conflicting branch:
+
+
+git merge test-conflict
+
+(Git will throw a CONFLICT (content) error here).
+
+
+Step 4: Resolve the Merge Conflict
+                                                                                                                              * Open classify.py in VS Code.
+                                                                                                                              * Locate the conflict block highlighted by Git (<<<<<<< HEAD ... ======= ... >>>>>>> test-conflict).
+                                                                                                                              * Click the "Accept Both Changes" button provided by VS Code (or manually delete the marker lines and keep both prints).
+                                                                                                                              * Save the file (Ctrl + S).
+                                                                                                                              * In the terminal, mark the conflict as resolved by adding the file, then finalize the merge:
+
+
+git add classify.py
+git commit -m "Resolved merge conflict by keeping both status prints"
+
+Step 5: Verify and Zip
+                                                                                                                              * View the merged timeline graph and run the file:
+
+
+git log --oneline --graph
+python classify.py
+
+                                                                                                                              * Save all files, close VS Code, and zip the student_classification folder for submission.
+
+
+
+
+MLOps Practical: Build a machine learning project for classifying emails as spam or not spam. Implement Git version control and configure a .gitignore file to exclude datasets, model files, and environment folders. 
+Step 1: Project Setup and .gitignore
+                                                                                                                              * Create a new folder named email_spam_classifier and open it in VS Code.
+                                                                                                                              * Open the VS Code Terminal (ensure it is Git Bash).
+                                                                                                                              * Initialize the empty Git repository:
+git init
+                                                                                                                              * Create a new file named .gitignore and add these rules to block environments, datasets, and saved ML models:
+# Exclude environment folders
+venv/
+env/
+
+
+# Exclude massive datasets
+*.csv
+*.tsv
+
+
+# Exclude heavy saved model files
+*.pkl
+*.joblib
+                                                                                                                              * Commit the .gitignore configuration:
+git add .gitignore
+git commit -m "Initial commit: Configured .gitignore to block datasets and models"
+Step 2: Download the Dataset
+                                                                                                                              * Create a file named download_data.py and paste this script:
+import urllib.request
+
+
+print("Downloading Spam dataset from the internet...")
+url = "https://raw.githubusercontent.com/justmarkham/pycon-2016-tutorial/master/data/sms.tsv"
+urllib.request.urlretrieve(url, "spam_dataset.tsv")
+print("Download complete! Saved as 'spam_dataset.tsv'")
+                                                                                                                              * Run the script to fetch the dataset:
+python download_data.py
+                                                                                                                              * Verify that Git ignores the spam_dataset.tsv file by running git status, then commit the script:
+git add download_data.py
+git commit -m "Add script to automatically download the spam dataset"
+Step 3: Build and Save the Spam Classifier
+                                                                                                                              * Create a file named spam_classifier.py and paste the following code:
+import pandas as pd
+import joblib
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+
+
+print("Loading dataset...")
+df = pd.read_csv("spam_dataset.tsv", sep='\t', header=None, names=['label', 'text'])
+
+
+print("Training the Naive Bayes model...")
+model = make_pipeline(CountVectorizer(), MultinomialNB())
+model.fit(df['text'], df['label'])
+
+
+print("Saving the trained model...")
+joblib.dump(model, "spam_model.joblib")
+print("Success! Model saved as 'spam_model.joblib'")
+                                                                                                                              * Run the script:
+python spam_classifier.py
+                                                                                                                              * Verify that Git ignores spam_model.joblib, then commit the script:
+git add spam_classifier.py
+git commit -m "Add Naive Bayes classifier and model saving pipeline"
+Step 4: Test with a Feature Branch
+                                                                                                                              * Create and switch to a new branch for testing new emails:
+git checkout -b feature-new-tests
+                                                                                                                              * Update spam_classifier.py by adding this test block at the end:
+test_emails = [
+    "URGENT! You have won a 1 week FREE membership in our $100,000 Prize Jackpot!",
+    "Hey Abbas, just checking what time the exam starts tomorrow?",
+    "Congratulations! Click here to claim your free gift card now."
+]
+predictions = model.predict(test_emails)
+
+
+print("\n--- Live Test Predictions ---")
+for email, pred in zip(test_emails, predictions):
+    print(f"[{pred.upper()}] -> {email}")
+                                                                                                                              * Commit the feature update:
+git add spam_classifier.py
+git commit -m "Feature: Added additional tricky spam test case"
+                                                                                                                              * Switch back to the master branch and merge safely:
+git checkout master
+git merge feature-new-tests
+Step 5: Verify and Zip
+                                                                                                                              * View the final timeline and test the merged code:
+git log --oneline --graph
+python spam_classifier.py
+                                                                                                                              * Save all files, close VS Code, and compress the email_spam_classifier folder into a ZIP file for submission.
+
+
+
+
+MLOps Practical:  Develop a classification model to predict whether a student will pass or fail. Track the performance of Logistic Regression, Decision Tree, and Random Forest models using MLflow. 
+Step 1: Project Setup and MLflow Git Shields
+                                                                                                                              * Create a new folder named student_mlflow and open it in VS Code.
+                                                                                                                              * Open the VS Code Terminal (ensure it is Git Bash).
+                                                                                                                              * Initialize the empty Git repository:
+git init
+                                                                                                                              * Create a new file named .gitignore and add these rules to block environments, datasets, and MLflow tracking databases:
+# Exclude environment folders
+venv/
+env/
+
+
+# Exclude MLflow tracking database
+mlruns/
+
+
+# Exclude datasets and models
+*.csv
+*.pkl
+*.joblib
+                                                                                                                              * Create a file named student_data.csv and paste this dataset (Features: Hours Studied, Attendance; Target: Pass):
+Hours_Studied,Attendance,Pass
+2,50,0
+3,60,0
+4,55,0
+5,75,1
+6,80,1
+7,85,1
+8,90,1
+9,95,1
+2,40,0
+8,85,1
+                                                                                                                              * Commit this setup to Git:
+git add .gitignore
+git commit -m "Initial commit: Configured .gitignore to block MLflow runs and datasets"
+Step 2: Training and Tracking Models with MLflow
+                                                                                                                              * Install MLflow in your terminal:
+pip install mlflow
+                                                                                                                              * Create a new file named train_models.py and paste this script to train and log Logistic Regression, Decision Tree, and Random Forest models:
+# train_models.py
+import pandas as pd
+import mlflow
+import mlflow.sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+
+print("Loading student data...")
+df = pd.read_csv("student_data.csv")
+X = df[['Hours_Studied', 'Attendance']]
+y = df['Pass']
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+models = {
+    "Logistic Regression": LogisticRegression(),
+    "Decision Tree": DecisionTreeClassifier(random_state=42),
+    "Random Forest": RandomForestClassifier(random_state=42)
+}
+
+
+mlflow.set_experiment("Student_Pass_Fail_Prediction")
+
+
+for model_name, model in models.items():
+    print(f"\n--- Starting MLflow run for {model_name} ---")
+    with mlflow.start_run(run_name=model_name):
+        model.fit(X_train, y_train)
+        predictions = model.predict(X_test)
+        accuracy = accuracy_score(y_test, predictions)
+        
+        mlflow.log_param("model_type", model_name)
+        mlflow.log_metric("accuracy", accuracy)
+        
+        # Note: skops_trusted_types is required for tree models in MLflow
+        mlflow.sklearn.log_model(model, "saved_model", skops_trusted_types=["sklearn.tree._tree.Tree"])
+        
+        print(f"Successfully trained {model_name}!")
+        print(f"Accuracy Logged: {accuracy:.2f}")
+
+
+print("\nAll models trained and logged to MLflow successfully!")
+                                                                                                                              * Run the script:
+python train_models.py
+                                                                                                                              * Track the script in Git (the mlruns/ folder will be ignored):
+git add train_models.py
+git commit -m "Add script to train and log models via MLflow"
+Step 3: Launching the Dashboard and Finalizing
+                                                                                                                              * Start the MLflow UI server from the terminal:
+python -m mlflow ui
+                                                                                                                              * Open a web browser and go to http://127.0.0.1:5000 to view the MLflow dashboard.
+                                                                                                                              * Click on "Student_Pass_Fail_Prediction" to verify all three models logged their 1.00 accuracy metrics.
+                                                                                                                              * Return to the VS Code terminal and press Ctrl + C to shut down the web server.
+                                                                                                                              * Open .gitignore and append rules to block the newly generated SQLite database:
+# Exclude MLflow database
+mlflow.db
+*.db
+                                                                                                                              * Finalize the Git commit:
+git add .gitignore train_models.py
+git commit -m "Update train script for tree models and block mlflow.db"
+                                                                                                                              * Save all files, close VS Code, and compress the student_mlflow folder into a ZIP file for submission.
+
+
+
+
+
+
+MLOps Practical: Build a customer churn prediction model and conduct experiments with different feature sets and classification algorithms. Use MLflow to compare experiment results and identify the best-performing model. 
+Step 1: Project Initialization and the Churn Dataset
+                                                                                                                              * Create a new folder named customer_churn_mlflow and open it in VS Code.
+                                                                                                                              * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+git init
+                                                                                                                              * Create a new file named .gitignore and add these rules:
+# Exclude environments
+venv/
+env/
+
+
+# Exclude MLflow databases
+mlruns/
+*.db
+
+
+# Exclude datasets and models
+*.csv
+*.pkl
+*.joblib
+                                                                                                                              * Create a file named churn_data.csv and paste this dataset:
+Tenure,MonthlyCharge,SupportCalls,Age,Churn
+12,50,1,25,0
+2,85,4,30,1
+24,60,0,45,0
+1,90,5,22,1
+60,105,2,55,0
+5,70,3,35,1
+36,45,1,40,0
+8,95,4,28,1
+48,55,0,50,0
+3,80,3,32,1
+                                                                                                                              * Commit this setup to Git:
+git add .gitignore
+git commit -m "Initial commit: Set up .gitignore and churn dataset"
+Step 2: Running the Grid Test Experiments
+                                                                                                                              * Create a file named churn_experiment.py and paste this script to test multiple feature sets and algorithms:
+# churn_experiment.py
+import pandas as pd
+import mlflow
+import mlflow.sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+
+print("Loading customer churn data...")
+df = pd.read_csv("churn_data.csv")
+y = df['Churn']
+
+
+feature_sets = {
+    "All_Features": ['Tenure', 'MonthlyCharge', 'SupportCalls', 'Age'],
+    "Support_Only": ['SupportCalls', 'MonthlyCharge']
+}
+
+
+models = {
+    "Logistic Regression": LogisticRegression(max_iter=1000),
+    "Random Forest": RandomForestClassifier(random_state=42)
+}
+
+
+mlflow.set_experiment("Customer_Churn_Experiments")
+
+
+for feat_name, features in feature_sets.items():
+    X = df[features]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    for model_name, model in models.items():
+        run_name = f"{model_name}_{feat_name}"
+        print(f"\n--- Running Experiment: {run_name} ---")
+        
+        with mlflow.start_run(run_name=run_name):
+            model.fit(X_train, y_train)
+            predictions = model.predict(X_test)
+            accuracy = accuracy_score(y_test, predictions)
+            
+            mlflow.log_param("model_type", model_name)
+            mlflow.log_param("feature_set", feat_name)
+            mlflow.log_metric("accuracy", accuracy)
+            mlflow.sklearn.log_model(model, "saved_model", skops_trusted_types=["sklearn.tree._tree.Tree"])
+            
+            print(f"Success! Accuracy Logged: {accuracy:.2f}")
+
+
+print("\nAll 4 experiments tracked successfully in MLflow!")
+                                                                                                                              * Run the experiment script:
+python churn_experiment.py
+                                                                                                                              * Commit the experimental script (the mlruns/ and *.db files will be ignored):
+git add churn_experiment.py
+git commit -m "Add churn prediction script to test multiple feature sets and algorithms via MLflow"
+Step 3: Analyzing the Results and Finalizing
+                                                                                                                              * Start the MLflow UI server to view the results:
+mlflow ui
+                                                                                                                              * Open http://127.0.0.1:5000 in a browser and go to "Customer_Churn_Experiments".
+                                                                                                                              * Compare the accuracy scores across all 4 runs.
+                                                                                                                              * Identify the Winner: Since all models achieved a 1.00 (100%) accuracy on this dataset, the tie-breaker goes to Logistic Regression with Support_Only features because it is the most efficient and simple model (using only 2 features instead of 4).
+                                                                                                                              * Shut down the web server (Ctrl + C in the terminal).
+                                                                                                                              * Compress the customer_churn_mlflow folder into a ZIP file for submission.
+
+
+
+
+
+
+
+
+MLOps Practical: Design a preprocessing pipeline for a house price dataset that handles missing values, encodes categorical variables, scales numerical features, and prepares data for model training. 
+Step 1: Project Setup and Creating the Messy Dataset
+                                                                                                                              * Create a new folder named house_price_pipeline and open it in VS Code.
+                                                                                                                              * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+git init
+                                                                                                                              * Create a new file named .gitignore and add these rules to block environments, datasets, and saved models:
+# Exclude environments
+venv/
+env/
+__pycache__/
+
+
+# Exclude datasets and models
+*.csv
+*.pkl
+*.joblib
+                                                                                                                              * Create a file named messy_houses.csv and paste this exact comma-separated text (Notice the missing values denoted by consecutive commas and the categorical Neighborhood text):
+Size_sqft,Bedrooms,Age_years,Neighborhood,Price
+2500,3,10,Urban,500000
+1800,2,,Suburban,350000
+3200,,5,Rural,600000
+1500,2,20,,300000
+2800,4,8,Urban,550000
+,,15,Suburban,400000
+2100,3,12,Urban,450000
+3000,4,,Rural,580000
+1200,1,30,Suburban,250000
+2600,3,5,Urban,520000
+                                                                                                                              * Commit this messy dataset setup to your history:
+git add .gitignore
+git commit -m "Initial commit: Configured .gitignore and added messy house dataset"
+Step 2: Building the Preprocessing Pipeline and Viewing Transformed Data
+                                                                                                                              * Create a new file in VS Code named build_pipeline.py.
+                                                                                                                              * Paste this complete script, which includes the pipeline setup and a diagnostic section to view the cleaned data immediately:
+# build_pipeline.py
+import pandas as pd
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LinearRegression
+
+
+print("1. Loading the messy housing data...")
+df = pd.read_csv("messy_houses.csv")
+
+
+# Separate the features (X) from the target price (y)
+X = df.drop('Price', axis=1)
+y = df['Price']
+
+
+# Define which columns are numbers and which are words
+numeric_features = ['Size_sqft', 'Bedrooms', 'Age_years']
+categorical_features = ['Neighborhood']
+
+
+print("\n2. Designing the Preprocessing Pipelines...")
+# Assembly Line 1: For Numbers (Fill blanks with mean, then scale)
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+
+# Assembly Line 2: For Words (Fill blanks with 'Missing', then encode to 1s and 0s)
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='constant', fill_value='Missing')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+
+# Combine the two mini-pipelines into one master preprocessor
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ])
+
+
+print("\n3. Building the Final Master Pipeline (Preprocessor + Model)...")
+# Bundle the data cleaning AND the final prediction model together
+full_pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('model', LinearRegression())
+])
+
+
+print("\n4. Pushing messy data through the pipeline...")
+# The pipeline automatically cleans the data AND trains the model in one step!
+full_pipeline.fit(X, y)
+
+
+print("\nSuccess! The pipeline processed the missing values, scaled the numbers, encoded the text, and trained the model.")
+
+
+print("\n--- DIAGNOSTIC: VIEWING THE CLEANED DATA ---")
+# Ask the preprocessor part of the pipeline to show us its work on the first 3 rows
+cleaned_data_array = full_pipeline.named_steps['preprocessor'].transform(X.head(3))
+
+
+print("Raw Data (First 3 Rows):")
+print(X.head(3))
+print("\nCleaned & Transformed Data (First 3 Rows):")
+print(cleaned_data_array)
+print("--------------------------------------------\n")
+
+
+# Let's test it by making it predict the price of the first house in our dataset
+sample_prediction = full_pipeline.predict(X.iloc[[0]])
+print(f"Test Prediction for House 1: ${sample_prediction[0]:,.2f}")
+                                                                                                                              * Run the script in your terminal to see the original raw data, the newly cleaned/scaled/encoded data array, and the final price prediction:
+python build_pipeline.py
+                                                                                                                              * Track and save your automated pipeline script:
+git add build_pipeline.py
+git commit -m "Add automated preprocessing pipeline with imputers, scalers, and diagnostic output"
+Step 3: Finalizing and Zipping
+                                                                                                                              * Save all files and close VS Code.
+                                                                                                                              * Locate the house_price_pipeline folder on your Desktop.
+                                                                                                                              * Right-click it and select Compress to ZIP file for submission.
+
+
+
+
+
+
+MLOps Practical: Develop a preprocessing pipeline for a student performance dataset that removes duplicate records, handles missing values, encodes categorical attributes, and separates input features from target labels. 
+Step 1: Project Setup and the Messy Dataset
+                                                                                                                              * Create a new folder named student_preprocessing and open it in VS Code.
+                                                                                                                              * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                                                                                                                              * 
+Create a new file named .gitignore and add these standard rules:
+Plaintext
+# Exclude environments
+venv/
+env/
+__pycache__/
+
+
+# Exclude datasets
+*.csv
+                                                                                                                                 * 
+Create a file named messy_students.csv and paste this exact comma-separated text:
+Code snippet
+Hours_Studied,Attendance,Extracurricular,Grade
+10,90,Yes,Pass
+5,,No,Fail
+8,85,,Pass
+10,90,Yes,Pass
+,75,Yes,Pass
+3,60,No,Fail
+                                                                                                                                    * 
+Commit the setup:
+Bash
+git add .gitignore
+git commit -m "Initial commit: Configured .gitignore and added messy student dataset"
+Step 2: The Preprocessing Python Script
+                                                                                                                                       * Create a new file named student_pipeline.py and paste this complete script:
+Python
+# student_pipeline.py
+import pandas as pd
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+
+print("1. Loading raw student data...")
+df = pd.read_csv("messy_students.csv")
+
+
+print("\n--- RAW DATA ---")
+print(df)
+
+
+print("\n2. Removing duplicate records...")
+# Drop exact duplicate rows to prevent model bias
+df = df.drop_duplicates()
+print(f"Data shape after dropping duplicates: {df.shape}")
+
+
+print("\n3. Separating features (X) from target labels (y)...")
+# X gets everything EXCEPT the Grade. y gets ONLY the Grade.
+X = df.drop('Grade', axis=1)
+y = df['Grade']
+
+
+print("\n4. Designing the Preprocessing Pipelines...")
+numeric_features = ['Hours_Studied', 'Attendance']
+categorical_features = ['Extracurricular']
+
+
+# Pipeline for Numbers: Fill blanks with the average, then scale
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+
+# Pipeline for Words: Fill blanks with the most frequent word, then encode to 1s/0s
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='most_frequent')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+
+# Bundle both pipelines into the master preprocessor
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ])
+
+
+print("\n5. Pushing data through the pipeline...")
+# Fit and transform the input features (X)
+X_cleaned = preprocessor.fit_transform(X)
+
+
+print("\n--- DIAGNOSTIC: VIEWING THE CLEANED DATA ---")
+print("Cleaned & Transformed Input Features (X):")
+print(X_cleaned)
+print("\nSeparated Target Labels (y):")
+print(y.values)
+print("--------------------------------------------\n")
+print("Success! Data is deduplicated, imputed, scaled, encoded, and split!")
+Step 3: Execution and Finalizing
+                                                                                                                                       * Run the script in the terminal:
+Bash
+python student_pipeline.py
+                                                                                                                                       * 
+Save the final script to your Git history:
+Bash
+git add student_pipeline.py
+git commit -m "Add automated preprocessing pipeline with deduplication, feature separation, and encoding"
+                                                                                                                                          * 
+Save all files, close VS Code, and compress the student_preprocessing folder into a ZIP file for submission.
+
+
+MLOps Practical:  Design and implement an automated machine learning workflow for house price prediction using a pipeline tool such as Scikit-learn Pipeline. Integrate preprocessing, model training, and model evaluation into a single workflow. 
+Step 1: Project Setup and Dataset
+                                                                                                                                             * Create a new folder named house_price_workflow and open it in VS Code.
+                                                                                                                                             * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                                                                                                                                             * 
+Create a new file named .gitignore and add the standard rules to block environments and datasets:
+Plaintext
+# Exclude environments and cache
+venv/
+env/
+__pycache__/
+
+
+# Exclude datasets and saved models
+*.csv
+*.pkl
+*.joblib
+                                                                                                                                                * 
+Create a file named house_data.csv and paste this dataset (expanded to 15 rows to ensure a proper Train/Test split for evaluation, containing both missing blanks and categorical text):
+Code snippet
+Size_sqft,Bedrooms,Age_years,Neighborhood,Price
+2500,3,10,Urban,500000
+1800,2,,Suburban,350000
+3200,,5,Rural,600000
+1500,2,20,,300000
+2800,4,8,Urban,550000
+,,15,Suburban,400000
+2100,3,12,Urban,450000
+3000,4,,Rural,580000
+1200,1,30,Suburban,250000
+2600,3,5,Urban,520000
+2300,3,18,Suburban,480000
+3500,5,2,Rural,700000
+1900,2,25,Urban,380000
+2700,4,7,,530000
+1600,2,22,Suburban,320000
+                                                                                                                                                   * 
+Commit the initial setup:
+Bash
+git add .gitignore
+git commit -m "Initial commit: Set up .gitignore and house data for unified workflow"
+Step 2: The Unified Workflow Script
+                                                                                                                                                      * Create a new file named house_workflow.py and paste this complete script. This code integrates data cleaning, learning, and testing into one single, automated Scikit-Learn Pipeline, complete with a diagnostic view of the cleaned data:
+Python
+# house_workflow.py
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+
+print("1. Loading housing dataset...")
+df = pd.read_csv("house_data.csv")
+
+
+print("2. Separating features and splitting data...")
+X = df.drop('Price', axis=1)
+y = df['Price']
+# Split data into 80% training and 20% testing
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+print("3. Designing the automated preprocessing assembly lines...")
+# Pipeline for numbers: Impute missing values with the mean, then scale
+numeric_features = ['Size_sqft', 'Bedrooms', 'Age_years']
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+
+# Pipeline for categorical text: Impute missing values with 'Missing', then One-Hot Encode
+categorical_features = ['Neighborhood']
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='constant', fill_value='Missing')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+
+# Combine both preprocessors
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ])
+
+
+print("4. Integrating Preprocessing and Model Training into a Single Workflow...")
+# This single pipeline handles cleaning, scaling, encoding, AND training!
+automated_workflow = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('model', LinearRegression())
+])
+
+
+print("5. Training the model via the automated workflow...")
+# We only pass the raw training data; the pipeline cleans it automatically before training
+automated_workflow.fit(X_train, y_train)
+
+
+# --- DIAGNOSTIC ADDITION ---
+print("\n--- DIAGNOSTIC: VIEWING THE CLEANED TRAINING DATA ---")
+# Ask the preprocessor part of the unified pipeline to show its work
+cleaned_data_array = automated_workflow.named_steps['preprocessor'].transform(X_train.head(3))
+print("Raw Training Data (First 3 Rows):")
+print(X_train.head(3))
+print("\nCleaned & Transformed Training Data:")
+print(cleaned_data_array)
+print("-----------------------------------------------------\n")
+
+
+print("6. Evaluating the unified workflow...")
+# We pass the raw test data; the pipeline applies the exact same cleaning steps automatically
+predictions = automated_workflow.predict(X_test)
+mse = mean_squared_error(y_test, predictions)
+r2 = r2_score(y_test, predictions)
+
+
+print("\n--- WORKFLOW EVALUATION RESULTS ---")
+print(f"Mean Squared Error: {mse:,.2f}")
+print(f"R-squared Score: {r2:.2f}")
+print("-----------------------------------")
+print("Automated Machine Learning Workflow executed successfully!")
+Step 3: Execution and Finalizing
+                                                                                                                                                      * Run the unified workflow script in your terminal to see the diagnostics and evaluation results:
+Bash
+python house_workflow.py
+                                                                                                                                                      * 
+Track and save the script in your Git history:
+Bash
+git add house_workflow.py
+git commit -m "Add unified Scikit-Learn Pipeline integrating preprocessing, training, diagnostics, and evaluation"
+                                                                                                                                                         * 
+Save all files, close VS Code, and compress the house_price_workflow folder into a ZIP file for submission.
+
+
+
+
+MLOps Practical: Develop a demonstration workflow for student pass/fail prediction that automates data loading, preprocessing, model training, evaluation, and saving the trained model. 
+Step 1: Project Setup and the Demo Dataset
+                                                                                                                                                            * Create a new folder named student_demo_workflow and open it in VS Code.
+                                                                                                                                                            * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                                                                                                                                                            * 
+Create a new file named .gitignore and add these rules to block environments, datasets, and saved models:
+Plaintext
+# Exclude environments and cache
+venv/
+env/
+__pycache__/
+
+
+# Exclude datasets and saved models
+*.csv
+*.joblib
+*.pkl
+                                                                                                                                                               * 
+Create a file named student_demo.csv and paste this exact dataset (with the fixed missing value line):
+Code snippet
+Study_Hours,Previous_Score,Extracurriculars,Pass
+10,85,Yes,1
+5,40,No,0
+8,,Yes,1
+3,45,No,0
+12,90,,1
+,60,Yes,1
+2,30,No,0
+7,75,Yes,1
+9,80,No,1
+4,50,,0
+                                                                                                                                                                  * 
+Commit this setup to Git:
+Bash
+git add .gitignore
+git commit -m "Initial commit: Set up .gitignore and student demo dataset"
+Step 2: The End-to-End Demo Script
+                                                                                                                                                                     * Create a new file in VS Code named demo_workflow.py.
+                                                                                                                                                                     * Paste this complete script, which automates data loading, preprocessing, training, evaluation, and serialization, while displaying the required diagnostic proofs:
+Python
+# demo_workflow.py
+import pandas as pd
+import joblib
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+
+print("1. AUTOMATED DATA LOADING...")
+df = pd.read_csv("student_demo.csv")
+
+
+print("2. SEPARATING & SPLITTING DATA...")
+X = df.drop('Pass', axis=1)
+y = df['Pass']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# ---------------- PREPROCESSING ----------------
+numeric_features = ['Study_Hours', 'Previous_Score']
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+
+categorical_features = ['Extracurriculars']
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='constant', fill_value='Missing')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features)
+    ])
+
+
+# ---------------- UNIFIED WORKFLOW ----------------
+automated_workflow = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('model', LogisticRegression())
+])
+
+
+print("3. AUTOMATED PREPROCESSING AND MODEL TRAINING...")
+automated_workflow.fit(X_train, y_train)
+
+
+# --- VISUAL PROOF OF PREPROCESSING ---
+print("\n--- DIAGNOSTIC: PROOF OF PREPROCESSING ---")
+cleaned_data_array = automated_workflow.named_steps['preprocessor'].transform(X_train.head(3))
+print("Raw Unseen Data (First 3 Rows):")
+print(X_train.head(3))
+print("\nCleaned, Scaled & Encoded Data:")
+print(cleaned_data_array)
+print("------------------------------------------\n")
+
+
+print("4. AUTOMATED MODEL EVALUATION...")
+predictions = automated_workflow.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
+print(f"Model Accuracy on Test Data: {accuracy:.2f}")
+
+
+print("\n5. SAVING (SERIALIZING) THE TRAINED PIPELINE...")
+joblib.dump(automated_workflow, "student_model.joblib")
+print("Success! Complete workflow saved as 'student_model.joblib'")
+Step 3: Execution and Finalizing
+                                                                                                                                                                     * Run the workflow script in your terminal to see the diagnostics, evaluation, and serialization:
+Bash
+python demo_workflow.py
+                                                                                                                                                                     * 
+Track and save the script in your Git history:
+Bash
+git add demo_workflow.py
+git commit -m "Add end-to-end classification workflow with diagnostics and joblib serialization"
+                                                                                                                                                                        * 
+Save all files, close VS Code, and compress the student_demo_workflow folder into a ZIP file for submission.
+
+
+
+
+MLOps Practical: Develop a REST API using Flask or FastAPI to serve a house price prediction model. Create a prediction endpoint that accepts house features in JSON format and returns the predicted price. 
+Step 1: Project Setup and Model Generation
+                                                                                                                                                                           * Create a new folder named house_price_api and open it in VS Code.
+                                                                                                                                                                           * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                                                                                                                                                                           * 
+Create a new file named .gitignore and add these rules to block the saved model from Git:
+Plaintext
+venv/
+env/
+__pycache__/
+*.joblib
+                                                                                                                                                                              * 
+Create a file named train_model.py and paste this script to quickly generate a trained model:
+Python
+# train_model.py
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+import joblib
+
+
+print("1. Generating dummy house data...")
+data = {
+    'Size_sqft': [1500, 2000, 2500, 3000, 3500], 
+    'Bedrooms': [2, 3, 3, 4, 4], 
+    'Price': [300000, 400000, 500000, 600000, 700000]
+}
+df = pd.DataFrame(data)
+
+
+print("2. Training the model...")
+X = df[['Size_sqft', 'Bedrooms']]
+y = df['Price']
+model = LinearRegression()
+model.fit(X, y)
+
+
+print("3. Saving the model for the API...")
+joblib.dump(model, 'house_model.joblib')
+print("Success! Model saved as 'house_model.joblib'")
+                                                                                                                                                                                 * 
+Run the training script to generate house_model.joblib, then track the files in Git:
+Bash
+python train_model.py
+git add .gitignore train_model.py
+git commit -m "Initial commit: Add setup and script to generate base model"
+Step 2: Building the API Server and Test Client
+                                                                                                                                                                                    * Install the necessary API libraries in your terminal:
+Bash
+pip install fastapi uvicorn requests pydantic
+                                                                                                                                                                                    * 
+Create a new file named main.py and paste the API server code. This defines the /predict endpoint, ensuring it accepts JSON and returns the predicted price:
+Python
+# main.py
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
+import pandas as pd
+
+
+# 1. Initialize the FastAPI app
+app = FastAPI(title="House Price Prediction API")
+
+
+# 2. Load the trained model into the server's memory
+print("Loading saved model...")
+model = joblib.load('house_model.joblib')
+
+
+# 3. Define the exact JSON structure the API expects to receive
+class HouseFeatures(BaseModel):
+    Size_sqft: float
+    Bedrooms: int
+
+
+# 4. Create the prediction endpoint (POST method)
+@app.post("/predict")
+def predict_price(features: HouseFeatures):
+    # Convert the incoming JSON data into a format the model understands
+    input_data = pd.DataFrame([features.model_dump()])
+    
+    # Make the prediction
+    prediction = model.predict(input_data)
+    
+    # Return both the accepted JSON and the predicted price as a JSON response
+    return {
+        "accepted_json_features": features.model_dump(),
+        "predicted_price": round(prediction[0], 2)
+    }
+                                                                                                                                                                                       * 
+Create a file named test_api.py and paste this client script. (We use this script instead of a web browser because browsers only send GET requests, while our API requires a POST request with a JSON payload to return a prediction):
+Python
+# test_api.py
+import requests
+import json
+
+
+# The URL of our local API server
+url = "http://127.0.0.1:8000/predict"
+
+
+# The house features formatted as JSON
+house_data = {
+    "Size_sqft": 2200,
+    "Bedrooms": 3
+}
+
+
+print(f"--- SENDING REQUEST ---")
+print(f"Sending JSON to API: {json.dumps(house_data)}")
+
+
+# Send the POST request to the API
+response = requests.post(url, json=house_data)
+
+
+print(f"\n--- API RESPONSE ---")
+# Print the exact JSON response returned by the server
+print(json.dumps(response.json(), indent=4))
+print("--------------------\n")
+print("API successfully accepted JSON features and returned the predicted price!")
+Step 3: Execution and Finalizing
+                                                                                                                                                                                          * Start the FastAPI server in your first terminal. This keeps the model loaded in memory and listening for incoming data:
+Bash
+uvicorn main:app
+                                                                                                                                                                                          * 
+Open a second terminal window in VS Code (leaving the server running in the first), and run the test script to send the JSON payload to the server:
+Bash
+python test_api.py
+                                                                                                                                                                                             * 
+Review the output in your second terminal to confirm the API received the JSON and returned the predicted price.
+                                                                                                                                                                                             * Stop the server in the first terminal (click into it and press Ctrl + C).
+                                                                                                                                                                                             * Save everything to your Git history:
+Bash
+git add main.py test_api.py
+git commit -m "Add FastAPI server and JSON client test script"
+                                                                                                                                                                                                * 
+Save all files, close VS Code, and compress the house_price_api folder into a ZIP file for submission.
+
+
+
+
+Build a REST API for a student pass/fail classification model. Implement an endpoint that accepts student performance data and returns the predicted class and, where supported, the prediction probability. 
+Problem Statement
+Build a REST API for a student pass/fail classification model. Implement an endpoint that accepts student performance data and returns the predicted class and, where supported, the prediction probability.
+Objective
+To build a student pass/fail classification model using Logistic Regression and deploy it using FastAPI. The API accepts student performance data in JSON format and returns the predicted class (PASS/FAIL) along with its prediction probability.
+________________
+
+
+Step 1: Project Setup and Model Generation
+1. Create the Project Folder
+                                                                                                                                                                                                   1. Open VS Code.
+                                                                                                                                                                                                   2. Create a folder named student_pass_api.
+                                                                                                                                                                                                   3. Open the folder in VS Code.
+                                                                                                                                                                                                   4. Open Terminal → New Terminal.
+                                                                                                                                                                                                   5. Select Git Bash as the terminal.
+Initialize Git:
+git init
+2. Create .gitignore
+Create a file named .gitignore and paste:
+venv/
+env/
+__pycache__/
+*.joblib
+3. Create a Virtual Environment
+Run:
+python -m venv venv
+source venv/Scripts/activate 
+.\venv\Scripts\Activate.ps1 (for Windows)
+Install the required libraries:
+python -m pip install pandas scikit-learn joblib fastapi uvicorn requests
+4. Create train_model.py
+Create a file named train_model.py and paste:
+# train_model.py
+
+
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+import joblib
+
+
+print("1. Generating student performance data...")
+
+
+data = {
+    "Study_Hours": [1, 2, 3, 4, 5, 6, 7, 8, 2, 4, 6, 9],
+    "Attendance": [40, 50, 55, 60, 70, 80, 85, 95, 35, 65, 75, 98],
+    "Previous_Score": [20, 30, 35, 45, 55, 65, 75, 85, 25, 50, 70, 90],
+    "Result": [0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1]
+}
+
+
+df = pd.DataFrame(data)
+
+
+print("2. Training classification model...")
+
+
+X = df[["Study_Hours", "Attendance", "Previous_Score"]]
+y = df["Result"]
+
+
+model = LogisticRegression(max_iter=1000)
+model.fit(X, y)
+
+
+print("3. Saving trained model...")
+
+
+joblib.dump(model, "student_model.joblib")
+
+
+print("Success! Model saved as student_model.joblib")
+5. Train the Model
+Run:
+python train_model.py
+Expected output:
+1. Generating student performance data...
+2. Training classification model...
+3. Saving trained model...
+Success! Model saved as student_model.joblib
+The file student_model.joblib will be generated.
+6. First Git Commit
+git add .gitignore train_model.py
+git commit -m "Initial commit: Add student classification model"
+
+________________
+Step 2: Building the FastAPI REST API
+1. Create main.py
+Create a file named main.py and paste:
+# main.py
+
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+import pandas as pd
+import joblib
+
+
+app = FastAPI(title="Student Pass/Fail Prediction API")
+
+
+# Load trained model
+model = joblib.load("student_model.joblib")
+
+
+# Define input structure
+class StudentFeatures(BaseModel):
+    Study_Hours: float
+    Attendance: float
+    Previous_Score: float
+
+
+# Prediction endpoint
+@app.post("/predict")
+def predict_result(student: StudentFeatures):
+
+
+    # Convert JSON into DataFrame
+    input_data = pd.DataFrame([student.model_dump()])
+
+
+    # Predict class
+    prediction = int(model.predict(input_data)[0])
+
+
+    # Calculate probabilities
+    probabilities = model.predict_proba(input_data)[0]
+
+
+    fail_probability = float(probabilities[0])
+    pass_probability = float(probabilities[1])
+
+
+    predicted_class = "PASS" if prediction == 1 else "FAIL"
+
+
+    prediction_probability = (
+        pass_probability if prediction == 1 else fail_probability
+    )
+
+
+    # Return JSON response
+    return {
+        "accepted_student_data": student.model_dump(),
+        "predicted_class": predicted_class,
+        "prediction_probability_percent": round(
+            prediction_probability * 100, 2
+        ),
+        "class_probabilities": {
+            "PASS": round(pass_probability * 100, 2),
+            "FAIL": round(fail_probability * 100, 2)
+        }
+    }
+
+________________
+Step 3: Creating the API Test Client
+1. Create test_api.py
+Create a file named test_api.py and paste:
+# test_api.py
+
+
+import requests
+import json
+
+
+url = "http://127.0.0.1:8000/predict"
+
+
+# Student performance data
+student_data = {
+    "Study_Hours": 6,
+    "Attendance": 80,
+    "Previous_Score": 70
+}
+
+
+print("\n--- SENDING STUDENT DATA ---")
+print(json.dumps(student_data, indent=4))
+
+
+# Send POST request
+response = requests.post(url, json=student_data)
+response.raise_for_status()
+
+
+print("\n--- API PREDICTION RESPONSE ---")
+print(json.dumps(response.json(), indent=4))
+
+
+print("\nAPI successfully returned:")
+print("1. Accepted student performance data")
+print("2. Predicted class (PASS/FAIL)")
+print("3. Prediction probability")
+print("4. Probability for both classes")
+
+________________
+Step 4: Execute and Test the REST API
+1. Start the FastAPI Server
+Open the first VS Code terminal and run:
+python -m uvicorn main:app --reload
+Expected output:
+INFO: Uvicorn running on http://127.0.0.1:8000
+INFO: Application startup complete.
+Keep the server running.
+2. Open a Second Terminal
+Open Terminal → New Terminal.
+Activate the virtual environment if necessary:
+source venv/Scripts/activate
+.\venv\Scripts\Activate.ps1 (for Windows)
+Run the test script:
+python test_api.py
+3. Expected Output
+Input JSON:
+{
+    "Study_Hours": 6,
+    "Attendance": 80,
+    "Previous_Score": 70
+}
+Example API response (probabilities are illustrative):
+{
+    "accepted_student_data": {
+        "Study_Hours": 6.0,
+        "Attendance": 80.0,
+        "Previous_Score": 70.0
+    },
+    "predicted_class": "PASS",
+    "prediction_probability_percent": 95.0,
+    "class_probabilities": {
+        "PASS": 95.0,
+        "FAIL": 5.0
+    }
+}
+Terminal confirmation:
+API successfully returned:
+1. Accepted student performance data
+2. Predicted class (PASS/FAIL)
+3. Prediction probability
+4. Probability for both classes
+4. Test Through FastAPI Documentation (Optional)
+                                                                                                                                                                                                   1. Open a web browser.
+                                                                                                                                                                                                   2. Visit http://127.0.0.1:8000/docs.
+                                                                                                                                                                                                   3. Expand the POST /predict endpoint.
+                                                                                                                                                                                                   4. Click Try it out.
+                                                                                                                                                                                                   5. Enter:
+{
+    "Study_Hours": 6,
+    "Attendance": 80,
+    "Previous_Score": 70
+}
+                                                                                                                                                                                                   6. 
+Click Execute.
+                                                                                                                                                                                                   7. Verify the JSON response contains the predicted class and probabilities.
+________________
+
+
+Step 5: Final Git Commit and Submission
+1. Stop the Server
+Switch to the first terminal and press Ctrl + C.
+2. Create requirements.txt
+Create a file named requirements.txt and paste:
+pandas
+scikit-learn
+joblib
+fastapi
+uvicorn
+requests
+3. Commit the Files
+Run:
+git add main.py test_api.py requirements.txt
+
+
+git commit -m "Add FastAPI student prediction endpoint and test client"
+4. Final Project Structure
+student_pass_api/
+│
+├── .gitignore
+├── train_model.py
+├── main.py
+├── test_api.py
+├── requirements.txt
+├── student_model.joblib
+└── venv/
+5. Create ZIP for Submission
+                                                                                                                                                                                                      1. Save all files.
+                                                                                                                                                                                                      2. Open File Explorer.
+                                                                                                                                                                                                      3. Create a submission copy of the project folder.
+                                                                                                                                                                                                      4. Exclude the venv folder from the submission copy.
+                                                                                                                                                                                                      5. Keep student_model.joblib so the API can run without retraining.
+                                                                                                                                                                                                      6. Right-click the submission folder.
+                                                                                                                                                                                                      7. Select Compress to ZIP file.
+                                                                                                                                                                                                      8. Name the ZIP student_pass_api.zip.
+                                                                                                                                                                                                      9. Submit the ZIP file.
+________________
+
+
+Final Result
+The student pass/fail classification REST API was successfully implemented using FastAPI and Logistic Regression.
+The API accepts student performance data through the /predict endpoint and returns:
+                                                                                                                                                                                                      * Accepted student performance data.
+                                                                                                                                                                                                      * Predicted class (PASS/FAIL).
+                                                                                                                                                                                                      * Prediction probability in percentage.
+                                                                                                                                                                                                      * Individual PASS and FAIL probabilities.
+The REST API was tested using a Python client and can also be tested through FastAPI's interactive documentation.
+Conclusion: A student pass/fail classification model was trained, saved, deployed through a FastAPI REST API, and tested using JSON requests and responses.
+
+
+
+
+MLOps Practical: Containerize House Price Prediction Application Using Docker
+
+
+Problem: Containerize a house price prediction application using Docker. Create a Dockerfile, install the required Python dependencies, and run the prediction application inside a container.
+
+
+Step 1: Project Setup and Dependencies
+                                                                                                                                                                                                      * Create a new folder named house_price_docker and open it in VS Code.
+                                                                                                                                                                                                      * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                                                                                                                                                                                                      * 
+Create a new file named .gitignore and add these rules to block the saved model and cache from Git:
+Plaintext
+venv/
+env/
+__pycache__/
+*.joblib
+                                                                                                                                                                                                         * 
+Create a new file named requirements.txt and define the Python libraries Docker needs to install:
+Plaintext
+pandas
+scikit-learn
+joblib
+Step 2: Model Generation and Initial Commit
+                                                                                                                                                                                                            * Create a file named train_model.py and paste this script to train and save the machine learning model:
+Python
+# train_model.py
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+import joblib
+
+
+print("1. Generating house price dataset...")
+data = {
+    "Size_sqft": [1000, 1500, 2000, 2500, 3000, 3500],
+    "Bedrooms": [1, 2, 3, 3, 4, 4],
+    "Price": [200000, 300000, 400000, 500000, 600000, 700000]
+}
+df = pd.DataFrame(data)
+
+
+print("2. Training house price prediction model...")
+X = df[["Size_sqft", "Bedrooms"]]
+y = df["Price"]
+model = LinearRegression()
+model.fit(X, y)
+
+
+print("3. Saving trained model...")
+joblib.dump(model, "house_model.joblib")
+print("Success! Model saved as house_model.joblib")
+                                                                                                                                                                                                            * 
+Run the training script to generate house_model.joblib:
+Bash
+python train_model.py
+                                                                                                                                                                                                               * 
+Track the foundation files and save your initial Git commit:
+Bash
+git add .gitignore requirements.txt train_model.py
+git commit -m "Initial commit: Add setup, requirements, and model generator"
+Step 3: The Prediction Application
+                                                                                                                                                                                                                  * Create a file named predict.py and paste the application code that loads the model and outputs the prediction:
+Python
+# predict.py
+import pandas as pd
+import joblib
+import json
+
+
+print("\n--- HOUSE PRICE PREDICTION APPLICATION ---")
+
+
+# Load trained model
+model = joblib.load("house_model.joblib")
+
+
+# Input house data
+house_data = {
+    "Size_sqft": 2200,
+    "Bedrooms": 3
+}
+
+
+print("\nInput House Data:")
+print(json.dumps(house_data, indent=4))
+
+
+# Convert data into DataFrame
+input_data = pd.DataFrame([house_data])
+
+
+# Predict house price
+prediction = model.predict(input_data)
+
+
+# Prepare prediction result
+result = {
+    "input_features": house_data,
+    "predicted_house_price": round(float(prediction[0]), 2)
+}
+
+
+# Display result
+print("\n--- PREDICTION RESULT ---")
+print(json.dumps(result, indent=4))
+
+
+print("\nHouse price prediction completed successfully!")
+Step 4: Docker Configuration
+                                                                                                                                                                                                                  * Create a new file named Dockerfile (exactly as written, with no extension) and paste the blueprint for the container:
+Dockerfile
+# Use Python base image
+FROM python:3.11-slim
+
+
+# Set working directory
+WORKDIR /app
+
+
+# Copy dependency file
+COPY requirements.txt .
+
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+# Copy application files
+COPY train_model.py .
+COPY predict.py .
+
+
+# Train the model inside Docker during the build process
+RUN python train_model.py
+
+
+# Run the prediction application when the container starts
+CMD ["python", "predict.py"]
+                                                                                                                                                                                                                  * 
+Create a file named .dockerignore and paste these rules to prevent heavy, unnecessary folders from being copied into the container:
+Plaintext
+venv/
+env/
+__pycache__/
+.git/
+*.joblib
+Step 5: Building, Running, and Finalizing
+                                                                                                                                                                                                                     * Make sure Docker Desktop is running on your computer.
+                                                                                                                                                                                                                     * In your VS Code terminal, build the Docker image (don't forget the period . at the end):
+Bash
+docker build -t house-price-predictor .
+                                                                                                                                                                                                                     * 
+Once the build is complete, run the container to see the predicted price output in your terminal:
+Bash
+docker run --rm house-price-predictor
+                                                                                                                                                                                                                        * 
+Save your final application and Docker files to your Git history:
+Bash
+git add .dockerignore Dockerfile predict.py
+git commit -m "Containerize house price prediction application using Docker"
+                                                                                                                                                                                                                           * 
+Save all files, close VS Code, and compress the house_price_docker folder into a ZIP file for submission.
+
+
+
+
+
+
+MLOps Practical: Dockerized Student Performance Prediction REST API
+Problem: Develop a Dockerized student performance prediction service using Flask or FastAPI. Configure the container to load the trained model and expose an API port for prediction requests.
+
+
+Step 1: Project Setup and Initial Git Commit
+                                                                                                                                                                                                                              * Create a new folder named student_docker_api and open it in VS Code.
+                                                                                                                                                                                                                              * Open the VS Code Terminal (ensure it is Git Bash) and initialize the repository:
+Bash
+git init
+                                                                                                                                                                                                                              * 
+Create a new file named .gitignore to block the saved model and environments from Git:
+Plaintext
+venv/
+env/
+__pycache__/
+*.joblib
+                                                                                                                                                                                                                                 * 
+Create a new file named .dockerignore to prevent heavy folders from copying into the container:
+Plaintext
+venv/
+env/
+__pycache__/
+.git/
+*.joblib
+                                                                                                                                                                                                                                    * 
+Create a new file named requirements.txt and define the required libraries:
+Plaintext
+pandas
+scikit-learn
+joblib
+fastapi
+uvicorn
+requests
+pydantic
+                                                                                                                                                                                                                                       * 
+Track the foundation files and save your initial Git commit:
+Bash
+git add .gitignore .dockerignore requirements.txt
+git commit -m "Initial commit: Add setup shields and requirements for Docker API"
+Step 2: The Machine Learning Model and FastAPI Server
+                                                                                                                                                                                                                                          * Create a file named train_model.py and paste this script to generate the model. (Docker will run this script automatically during the build process):
+Python
+# train_model.py
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+import joblib
+
+
+print("1. Generating student performance data...")
+data = {
+    "Study_Hours": [2, 3, 4, 5, 6, 7, 8, 9],
+    "Attendance": [40, 50, 60, 75, 80, 85, 90, 95],
+    "Pass": [0, 0, 0, 1, 1, 1, 1, 1]
+}
+df = pd.DataFrame(data)
+
+
+print("2. Training the classification model...")
+X = df[["Study_Hours", "Attendance"]]
+y = df["Pass"]
+model = LogisticRegression()
+model.fit(X, y)
+
+
+print("3. Saving the trained model...")
+joblib.dump(model, "student_model.joblib")
+print("Success! Model saved as 'student_model.joblib'")
+                                                                                                                                                                                                                                          * 
+Create a file named main.py and paste the API server code. This loads the model and sets up the /predict endpoint:
+Python
+# main.py
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
+import pandas as pd
+
+
+app = FastAPI(title="Dockerized Student Performance API")
+
+
+# Load the model generated by train_model.py
+model = joblib.load('student_model.joblib')
+
+
+class StudentData(BaseModel):
+    Study_Hours: float
+    Attendance: float
+
+
+@app.post("/predict")
+def predict_performance(student: StudentData):
+    input_data = pd.DataFrame([student.model_dump()])
+    prediction = model.predict(input_data)
+    
+    result = "PASS" if prediction[0] == 1 else "FAIL"
+    
+    return {
+        "received_data": student.model_dump(),
+        "predicted_outcome": result
+    }
+                                                                                                                                                                                                                                             * 
+Create a file named test_api.py. This script will act as our client to test the API from the outside once the container is running:
+Python
+# test_api.py
+import requests
+import json
+
+
+# This targets the exposed port on our local machine, which routes into the Docker container!
+url = "http://127.0.0.1:8000/predict"
+
+
+student_payload = {
+    "Study_Hours": 7.5,
+    "Attendance": 88.0
+}
+
+
+print(f"--- SENDING REQUEST TO DOCKER CONTAINER ---")
+print(f"Payload: {json.dumps(student_payload)}")
+
+
+response = requests.post(url, json=student_payload)
+
+
+print(f"\n--- CONTAINER RESPONSE ---")
+print(json.dumps(response.json(), indent=4))
+print("--------------------------")
+Step 3: The Docker Configuration
+                                                                                                                                                                                                                                                * Create a new file named Dockerfile (exactly as written, with no extension) and paste the blueprint. Notice the critical 0.0.0.0 host binding and the EXPOSE command:
+Dockerfile
+# Use Python base image
+FROM python:3.11-slim
+
+
+# Set working directory
+WORKDIR /app
+
+
+# Copy dependency file and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+# Copy application files
+COPY train_model.py .
+COPY main.py .
+
+
+# Train the model inside Docker during the build
+RUN python train_model.py
+
+
+# Expose port 8000 for the API
+EXPOSE 8000
+
+
+# Start the FastAPI server on 0.0.0.0 to accept outside connections
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+Step 4: Building, Running, and Finalizing
+                                                                                                                                                                                                                                                * Make sure Docker Desktop is running on your computer.
+                                                                                                                                                                                                                                                * In your first VS Code terminal, build the container image:
+Bash
+docker build -t student-api-docker .
+                                                                                                                                                                                                                                                * 
+Once built, run the container. The -p 8000:8000 flag maps your computer's port to the container's exposed port:
+Bash
+docker run -p 8000:8000 --rm student-api-docker
+                                                                                                                                                                                                                                                   * 
+Open a second terminal window in VS Code (leaving the container running in the first terminal), and run your test script:
+Bash
+python test_api.py
+                                                                                                                                                                                                                                                      * 
+Review the output in your second terminal to confirm your local script successfully communicated with the Dockerized API and received a "PASS" prediction.
+                                                                                                                                                                                                                                                      * Stop the container in your first terminal (click into it and press Ctrl + C).
+                                                                                                                                                                                                                                                      * Save all remaining files to your Git history:
+Bash
+git add train_model.py main.py test_api.py Dockerfile
+git commit -m "Add machine learning model, FastAPI server, and Dockerfile to containerize the API"
+                                                                                                                                                                                                                                                         * 
+Save all files, close VS Code, and compress the student_docker_api folder into a ZIP file for submission.
